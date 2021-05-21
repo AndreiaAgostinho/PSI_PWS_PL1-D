@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7001a1a5-552a-4369-8b2d-3d517ff80e18" name="Default" comment="" />
+    <list default="true" id="7001a1a5-552a-4369-8b2d-3d517ff80e18" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../doc/IPL-TeSP-PSI-MDS-2021-Template_Projeto_PWS.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../doc/IPL-TeSP-PSI-MDS-2021-Template_Projeto_PWS.docx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -74,6 +76,9 @@
         <option value="Html5" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -148,6 +153,7 @@
     </include_path>
   </component>
   <component name="ProjectId" id="1ZA5DMEVoRQ6Eu1IVf9Y3ueUDaG" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -239,6 +245,7 @@
       <workItem from="1620085716697" duration="1294000" />
       <workItem from="1620203370807" duration="1209000" />
       <workItem from="1620204927142" duration="5128000" />
+      <workItem from="1621594979450" duration="5236000" />
     </task>
     <servers />
   </component>
@@ -253,6 +260,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
