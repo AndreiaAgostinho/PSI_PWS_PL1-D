@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7001a1a5-552a-4369-8b2d-3d517ff80e18" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../doc/IPL-TeSP-PSI-MDS-2021-Template_Projeto_PWS.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../doc/IPL-TeSP-PSI-MDS-2021-Template_Projeto_PWS.docx" afterDir="false" />
-    </list>
+    <list default="true" id="7001a1a5-552a-4369-8b2d-3d517ff80e18" name="Default" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -246,6 +244,9 @@
       <workItem from="1620203370807" duration="1209000" />
       <workItem from="1620204927142" duration="5128000" />
       <workItem from="1621594979450" duration="5236000" />
+      <workItem from="1621783502572" duration="23000" />
+      <workItem from="1621783672432" duration="651000" />
+      <workItem from="1621784868197" duration="67000" />
     </task>
     <servers />
   </component>
@@ -271,6 +272,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
