@@ -6,11 +6,11 @@ create table pessoas(
 	idPessoa int unsigned auto_increment,
     nome	varchar(60) not null,
     sexo	enum('M','F') not null,
-    dtaNascimento date	not	null,
+    dtaNascimento varchar(50) not null,
     nif		varchar(9)	not null,
     morada	varchar(60)	not null,
     contacto varchar(9) not null,
-    username varchar(20) not null,
+    username varchar(20) not null unique,
     palavrapasse varchar(256) not null,
     tipo 	enum('A','G','O','P') not null,
     constraint pk_pessoa_id	primary key (idPessoa))
@@ -75,7 +75,7 @@ create table voos(
 	constraint fk_voo_avi foreign key (idAviao) references aviaos(idAviao)
 ) engine=InnoDB;
 
-create table escalas(
+create table bilhetes_voos(
 	idEscala int unsigned auto_increment,
     horarioEmbarque datetime not null,
     lugar varchar(4) not null,

@@ -4,7 +4,10 @@ use ArmoredCore\Facades\AssetBundler;
 use ArmoredCore\Facades\DebugRenderer;
 use ArmoredCore\WebObjects\URL;
 
-
+if (!isset ($_SESSION['ID']) )
+{
+    $_SESSION['ID'] = null;
+}
 ?>
 
 <!DOCTYPE html>
@@ -53,8 +56,19 @@ use ArmoredCore\WebObjects\URL;
                         <li><a href="<?= Url::toRoute('devtools/accomponents')?>">Armored Core Components</a></li>
                     </ul>
                 </li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a class="btn" href="<?= URL::toRoute('home/login')?>">SIGN IN / SIGN UP</a></li>
+                <?php
+                if($_SESSION['ID'] == null){
+                    echo '<li><a class="btn" href="'.URL::toRoute("home/login").'">SIGN IN / SIGN UP</a></li>';
+                }
+                else{   
+                    $nome = $_SESSION["Nome"];
+                    echo '<li><a href="'. URL::toRoute("pessoa/perfil").' ">Bem-Vindo(a) '. $nome .'</a></li>';
+
+                    echo '<li><a href="' . URL::toRoute('pessoa/sair') . ' ">Sair</a></li>';
+                }
+
+                ?>
+                }
             </ul>
         </div><!--/.nav-collapse -->
     </div>

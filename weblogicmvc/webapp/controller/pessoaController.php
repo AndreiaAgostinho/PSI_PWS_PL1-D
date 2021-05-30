@@ -1,5 +1,4 @@
 <?php 
-
 use ArmoredCore\Controllers\BaseController;
 use ArmoredCore\Interfaces\ResourceControllerInterface;
 use ArmoredCore\WebObjects\Post;
@@ -33,7 +32,7 @@ class pessoaController extends BaseController implements ResourceControllerInter
 	 */
 	public function create()
 	{
-		return View::make('pessoa.create');
+		return View::make('project.registo');
 	}
 
 
@@ -48,7 +47,7 @@ class pessoaController extends BaseController implements ResourceControllerInter
 
 		if($pessoa->is_valid()){
 		    $pessoa->save();
-		    Redirect::toRoute('pessoa/index');
+		    Redirect::toRoute('home/index');
 		} else {
 		    //redirect to form with data and errors
 		    Redirect::flashToRoute('pessoa/create', ['pessoa' => $pessoa]);
@@ -66,7 +65,7 @@ class pessoaController extends BaseController implements ResourceControllerInter
 		if (is_null($pessoa)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('pessoa.show', ['pessoa' => $pessoa]);
+		    return View::make('pessoa.perfil', ['pessoa' => $pessoa]);
 		}
 	}
 
@@ -115,4 +114,44 @@ class pessoaController extends BaseController implements ResourceControllerInter
 		$pessoa->delete();
 		Redirect::toRoute('pessoa/index');
 	}
+
+	public function login(){
+
+		return View::Make('home/login');
+	}
+
+	public function verifylogin(){
+
+		$username = Post::get("username");
+		$password = Post::get("password");
+
+		$pessoas = pessoa::find_all_by_username([$username], array('select' => 'palavrapasse'));
+
+		foreach ($pessoas as $pessoa) {
+                if ($password == $pessoa->palavrapasse) {
+                	$pessoas = pessoa::find_all_by_username_and_palavrapasse([$username], [$password]);
+                	foreach ($pessoas as $pessoa)
+                	{
+                		$_SESSION["ID"] = $pessoa->idpessoa;
+                		$_SESSION["Nome"] = $pessoa->nome;
+                	}
+
+                    Redirect::toRoute('home/index');
+                }
+            }
+
+            
+            View::Make('home/login');
+        }
+
+    public function perfil(){
+    	View::Make('project.perfil');
+    }
+
+    public function sair(){
+    	$_SESSION["ID"] = null;
+    	$_SESSION["Nome"] = null;
+    	Redirect::toRoute('home/index');
+    }
 }
+
