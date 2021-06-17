@@ -1,0 +1,17 @@
+<?php
+use ArmoredCore\WebObjects\Layout;
+use ArmoredCore\WebObjects\Url;
+
+Layout::includeLayout('indexheader'); ?>
+
+<header id="head">
+	<div class="container">
+		<form method="POST" action="<?php Url::toRoute('flight/find')?>">
+			Partida: <input type="text" name="partida" required>
+			Chegada: <input type="text" name="chegada" required>
+			<br>
+			<input type="submit">
+		</form>
+	</div>
+</header>
+<?php Layout::includeLayout('footer') ?>

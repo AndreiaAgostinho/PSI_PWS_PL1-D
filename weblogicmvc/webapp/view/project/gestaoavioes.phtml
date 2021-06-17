@@ -1,0 +1,45 @@
+<?php
+use ArmoredCore\WebObjects\Layout;
+use ArmoredCore\WebObjects\Url;
+use ArmoredCore\WebObjects\Data;
+use ArmoredCore\WebObjects\Redirect;
+
+Layout::includeLayout('indexheader'); 
+$airplanes = Data::get('airplanes');
+
+?>
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  color: black;
+}
+</style>
+<header id="head">
+	<div class="container ">
+		<h3>Aviões</h3> <table class="container">
+		<?php 
+
+			foreach ($airplanes as $airplane) {
+				echo "<tr>";
+				echo '<td>'.$airplane->marca .'</td>';
+				echo '<td>'.$airplane->modelo .'</td>';
+				echo '<td>'.$airplane->capacidade.'</td>';
+				echo '<td><a class="btn" href="'.Url::ToRoute("airplane/destroy", $airplane->id).'">X</a></td>';
+				echo "</tr>";
+			}
+		?>
+		</table>
+		<br>
+		<form method="POST" action="<?php Url::toRoute('airplane/store')?>">
+			Marca: <input type="text" name="marca" required>
+			Modelo: <input type="text" name="modelo" required>
+			Capacidade: <input type="text" name="capacidade" required>
+			<br>
+			<br>
+			<input text="Adicionar" type="submit">
+		</form>
+	</div>
+</header>
+
+<?php Layout::includeLayout('footer') ?>

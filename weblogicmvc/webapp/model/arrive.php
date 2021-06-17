@@ -2,10 +2,10 @@
 
 use \ActiveRecord\Model;
 
-class partida extends Model
+class arrive extends Model
 {
 	static $belongs_to = array(
-		array('aeroporto'),
-		array('voo')
+		array('airport'),
+		array('flight')
 	);
 }

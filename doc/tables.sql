@@ -2,8 +2,8 @@ create database projeto;
 
 use projeto;
 
-create table pessoas(
-	idPessoa int unsigned auto_increment,
+create table peoples(
+	people_id int unsigned auto_increment,
     nome	varchar(60) not null,
     sexo	enum('M','F') not null,
     dtaNascimento varchar(50) not null,
@@ -13,76 +13,77 @@ create table pessoas(
     username varchar(20) not null unique,
     palavrapasse varchar(256) not null,
     tipo 	enum('A','G','O','P') not null,
-    constraint pk_pessoa_id	primary key (idPessoa))
+    constraint pk_peoples_id	primary key (people_id))
     engine=innodb;
     
-create table bilhetes(
-	idBilhete int unsigned auto_increment,
+create table tickets(
+	ticket_id int unsigned auto_increment,
     horaCompra datetime	not null default current_timestamp,
     checkin	 enum('S','N') not null,
     idaEVolta enum('I', 'V') not null,
-    idPessoa int unsigned not null,
-    constraint pk_bilhete_id primary key (idBilhete),
-    constraint fk_bilhete_id foreign key (idPessoa) references pessoas(idPessoa)) 
+    people_id int unsigned not null,
+    constraint pk_ticket_id primary key (ticket_id),
+    constraint fk_ticket_id foreign key (people_id) references peoples(people_id)) 
 engine= InnoDB;
 
-create table aeroportos(
-	idAeroporto int unsigned auto_increment,
+create table airports(
+	airport_id int unsigned auto_increment,
     pais varchar(20) not null,
     cidade varchar(30) not null,
     nome varchar(50) not null,
-    constraint pk_aeroporto_id primary key (idAeroporto)
+    constraint pk_airport_id primary key (airport_id)
 ) engine=InnoDB;
 
-create table aviaos(
-	idAviao int unsigned auto_increment,
+create table airplanes(
+	airplane_id int unsigned auto_increment,
+    marca varchar(20) not null,
     modelo varchar(20) not null,
     capacidade int unsigned not null,
-    constraint pk_aviao_id primary key (idAviao)
+    constraint pk_airplane_id primary key (airplane_id)
 ) engine=InnoDB;
 
-create table partidas(
-	idPartida int unsigned auto_increment,
+create table departures(
+	departure_id int unsigned auto_increment,
     terminal varchar(2) not null,
     horarioPartida datetime not null,
     pista varchar(3) not null,
-    idAeroporto int unsigned not null,
-    constraint pk_partida_id primary key (idPartida),
-    constraint fk_partida_aero foreign key (idAeroporto) references aeroportos(idAeroporto)
+    airport_id int unsigned not null,
+    constraint pk_departure_id primary key (departure_id),
+    constraint fk_departure_aero foreign key (airport_id) references airports(airport_id)
 ) engine=InnoDB;
 
-create table chegadas(
-	idChegada int unsigned auto_increment,
+create table arrives(
+	arrive_id int unsigned auto_increment,
     terminal varchar(2) not null,
     horarioChegada datetime not null,
     pista varchar(3) not null,
-    idAeroporto int unsigned not null,
-    constraint pk_chegada_id primary key (idChegada),
-    constraint fk_chegada_aero foreign key (idAeroporto) references aeroportos(idAeroporto)
+    airport_id int unsigned not null,
+    constraint pk_arrive_id primary key (arrive_id),
+    constraint fk_arrive_aero foreign key (airport_id) references airports(airport_id)
 ) engine=InnoDB;
 
-create table voos(
-	idVoo	int unsigned auto_increment,
+create table flights(
+	flight_id	int unsigned auto_increment,
     nVoo	varchar(6) not null,
     distancia double not null,
     comAerea  varchar(20) not null,
-    idPartida int unsigned not null,
-    idChegada int unsigned not null,
-    idAviao	int unsigned not null,
-    constraint pk_voo_id primary key (idVoo),
-    constraint fk_voo_part foreign key (idPartida) references partidas(idPartida),
-    constraint fk_voo_cheg foreign key (idChegada) references chegadas(idChegada),
-	constraint fk_voo_avi foreign key (idAviao) references aviaos(idAviao)
+    departure_id int unsigned not null,
+    arrive_id int unsigned not null,
+    airplane_id	int unsigned not null,
+    constraint pk_flight_id primary key (flight_id),
+    constraint fk_flight_part foreign key (departure_id) references departures(departure_id),
+    constraint fk_flight_cheg foreign key (arrive_id) references arrives(arrive_id),
+	constraint fk_flight_avi foreign key (airplane_id) references airplanes(airplane_id)
 ) engine=InnoDB;
 
-create table bilhetes_voos(
-	idEscala int unsigned auto_increment,
+create table tickets_flights(
+	ticket_flight_id int unsigned auto_increment,
     horarioEmbarque datetime not null,
     lugar varchar(4) not null,
     portaEmbarque varchar(3) not null,
-    idBilhete int unsigned not null,
-    idVoo int unsigned not null,
-    constraint pk_escala_id	primary key (idEscala),
-    constraint fk_escala_bil foreign key (idBilhete) references bilhetes(idBilhete),
-	constraint fk_escala_voo foreign key (idVoo) references voos(idVoo)
+    ticket_id int unsigned not null,
+    flight_id int unsigned not null,
+    constraint pk_ticket_flight_id	primary key (ticket_flight_id),
+    constraint fk_ticket_flight_bil foreign key (ticket_id) references tickets(ticket_id),
+	constraint fk_ticket_flight_voo foreign key (flight_id) references flights(flight_id)
 ) engine=InnoDB;

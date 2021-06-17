@@ -2,9 +2,9 @@
 
 use \ActiveRecord\Model;
 
-class bilhete extends Model
+class ticket extends Model
 {
 	static $has_many = array(
-		array('escalas')
+		array('tickets_flights')
 	);
 }

@@ -2,9 +2,9 @@
 
 use \ActiveRecord\Model;
 
-class aviao extends Model
+class airplane extends Model
 {
 	static $has_many = array(
-		array('voos')
+		array('flights')
 	);
 }
