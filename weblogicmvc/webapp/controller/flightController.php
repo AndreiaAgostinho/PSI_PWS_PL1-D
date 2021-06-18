@@ -22,6 +22,7 @@ class flightController extends BaseController implements ResourceControllerInter
 	 */
 	public function index()
 	{
+
 		$flights = flight::all();
 		return View::make('flight.index', ['flights' => $flights]);
 	}
@@ -43,7 +44,42 @@ class flightController extends BaseController implements ResourceControllerInter
 	{
 		//create new resource (activerecord/model) instance with data from POST
 		//your form name fields must match the ones of the table fields
-		$flight = new flight(Post::getAll());
+				$partida= array(
+			'terminal' => Post::get("terminal"),
+			'horarioPartida' => Post::get("horarioPartida"),
+			'pista' => Post::get("pista"),
+			'airport_id' => Post::get('airport_id')
+		);
+
+		$departure = new departure($partida);
+
+		$departure->save();
+
+		$lastdeparture = departure::last();
+
+		$chegada= array(
+			'terminal' => Post::get("terminalC"),
+			'horarioChegada' => Post::get("horarioChegada"),
+			'pista' => Post::get("pistaC"),
+			'airport_id' => Post::get('airport_idC')
+		);
+
+		$arrive = new arrive($chegada);
+
+		$arrive->save();
+
+		$lastarrive = arrive::last();
+
+		$voo = array(
+			'nVoo' => Post::get("nVoo"),
+			'distancia' => Post::get("distancia"),
+			'comAerea' => Post::get("comAerea"),
+			'departure_id' => $lastdeparture->id,
+			'arrive_id' => $lastarrive->id,
+			'airplane_id' => Post::get("airplane_id")
+			);
+
+		$flight= new flight($voo);
 
 		if($flight->is_valid()){
 		    $flight->save();
@@ -118,6 +154,15 @@ class flightController extends BaseController implements ResourceControllerInter
 	public function search(){
 
 		return View::make('project/voos');
+	}
+
+	public function gestao(){
+
+		$flights = flight::all();
+		$airplanes = airplane::all();
+		$airports = airport::all();
+	return View::make('project.gestaovoos', ['flights' => $flights, 'airplanes' => $airplanes,'airports' => $airports]);
+
 	}
 }
 

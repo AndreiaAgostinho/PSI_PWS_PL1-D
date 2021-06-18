@@ -47,7 +47,7 @@ class peopleController extends BaseController implements ResourceControllerInter
 
 		if($people->is_valid()){
 		    $people->save();
-		    Redirect::toRoute('home/index');
+		    Redirect::toRoute('flight/gestao');
 		} else {
 		    //redirect to form with data and errors
 		    Redirect::flashToRoute('people/create', ['people' => $people]);

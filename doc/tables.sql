@@ -76,14 +76,14 @@ create table flights(
 	constraint fk_flight_avi foreign key (airplane_id) references airplanes(airplane_id)
 ) engine=InnoDB;
 
-create table tickets_flights(
-	ticket_flight_id int unsigned auto_increment,
+create table ticketsflights(
+	ticketflight_id int unsigned auto_increment,
     horarioEmbarque datetime not null,
     lugar varchar(4) not null,
     portaEmbarque varchar(3) not null,
     ticket_id int unsigned not null,
     flight_id int unsigned not null,
-    constraint pk_ticket_flight_id	primary key (ticket_flight_id),
+    constraint pk_ticket_flight_id	primary key (ticketflight_id),
     constraint fk_ticket_flight_bil foreign key (ticket_id) references tickets(ticket_id),
 	constraint fk_ticket_flight_voo foreign key (flight_id) references flights(flight_id)
 ) engine=InnoDB;

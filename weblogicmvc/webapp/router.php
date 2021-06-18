@@ -39,7 +39,8 @@ Router::get('airplane/gestaoavioes', 'airplaneController/gestao');
 Router::post('airplane/gestaoavioes', 'airplaneController/store');
 Router::get('airplane/destroy', 'airplaneController/destroy');
 
-
+Router::get('flight/gestao', 'flightController/gestao');
+Router::post('flight/gestao', 'flightController/store');
 
 
 
