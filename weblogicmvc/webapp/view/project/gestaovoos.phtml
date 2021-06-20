@@ -11,15 +11,15 @@ $airplanes = Data::get('airplanes');
 
 ?>
 <style>
-table, th, td {
-  border: 1px solid black;
+table,tr, th, td {
+  border: 1px solid;
   border-collapse: collapse;
-  color: black;
+  color: teal;
 }
 </style>
 <header id="head">
-	<div class="container ">
-		<h3>Voos</h3> <table class="container">
+	<div class="container">
+		<h2 style="font-weight: bold; font-size: xx-large">Voos</h2> <table class="container">
 		<?php 
 			foreach ($flights as $flight) {
 				echo "<tr>";
