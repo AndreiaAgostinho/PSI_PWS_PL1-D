@@ -42,6 +42,8 @@ Router::get('airplane/destroy', 'airplaneController/destroy');
 Router::get('flight/gestao', 'flightController/gestao');
 Router::post('flight/gestao', 'flightController/store');
 
+Router::get('tickets/checkin', 'ticketController/checkin');
 
+Router::get('ticket/pessoa', 'ticketController/pessoa');
 
 /************** End of URLEncoder Routing Rules ************************************/

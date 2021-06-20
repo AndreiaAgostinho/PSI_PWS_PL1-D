@@ -114,6 +114,20 @@ class ticketController extends BaseController implements ResourceControllerInter
 		$ticket->delete();
 		Redirect::toRoute('ticket/index');
 	}
+
+	public function checkin()
+	{
+		$flights = flight::all();
+		View::make('project.gestaocheckin', ['flights' => $flights]);
+		
+	}
+
+	public function pessoa($id)
+	{
+		View::make('project.passageiros');
+	}
+
+
 }
 
 

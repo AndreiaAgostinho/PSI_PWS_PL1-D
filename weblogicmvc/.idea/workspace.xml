@@ -2,13 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7001a1a5-552a-4369-8b2d-3d517ff80e18" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../doc/IPL-TeSP-PSI-MDS-2021-Template_Projeto_PWS.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../doc/IPL-TeSP-PSI-MDS-2021-Template_Projeto_PWS.docx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/startup/config/db.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/startup/config/db.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/controller/ticketController.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/controller/ticketController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/router.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/view/home/index.phtml" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/view/home/index.phtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/view/layout/footer.phtml" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/view/layout/footer.phtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/view/layout/header.phtml" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/view/layout/header.phtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/view/layout/indexheader.phtml" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/view/layout/indexheader.phtml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp/view/project/gestaoavioes.phtml" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/view/project/gestaoavioes.phtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/view/project/gestaovoos.phtml" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/view/project/gestaovoos.phtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -265,6 +267,7 @@
       <workItem from="1622118325448" duration="1103000" />
       <workItem from="1624118134054" duration="6964000" />
       <workItem from="1624180730982" duration="3525000" />
+      <workItem from="1624205167764" duration="5894000" />
     </task>
     <servers />
   </component>
