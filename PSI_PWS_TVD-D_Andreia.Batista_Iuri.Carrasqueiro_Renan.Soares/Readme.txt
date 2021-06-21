@@ -5,7 +5,7 @@ Renan Soares, 2201128
 
 
 
-			Cedenciais para Acesso ao Projeto:
+			Credenciais para Acesso ao Projeto:
   -Administrador:
 Login: admin
 Password: admin
