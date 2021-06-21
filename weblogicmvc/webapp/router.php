@@ -24,7 +24,10 @@ Router::get('pessoa/create', 'peopleController/create');
 Router::post('pessoa/create', 'peopleController/store');
 Router::post('pessoa/store', 'peopleController/store');
 Router::post('home/login', 'peopleController/verifylogin');
+
 Router::get('pessoa/perfil', 'peopleController/perfil');
+Router::post('pessoa/perfil', 'peopleController/atualizar');
+
 Router::get('pessoa/sair', 'peopleController/sair');
 
 Router::get('pessoa/gestaopessoal', 'peopleController/gestao');
@@ -41,7 +44,12 @@ Router::get('airplane/destroy', 'airplaneController/destroy');
 
 Router::get('flight/gestao', 'flightController/gestao');
 Router::post('flight/gestao', 'flightController/store');
+Router::get('flight/destroy', 'flightController/destroy');
+Router::post('home/voos', 'flightController/find');
+Router::post('home/index', 'flightController/find');
 
+Router::get('ticket/comprar', 'ticketController/comprar');
+Router::Post('ticket/comprar', 'ticketController/confirmcomprar');
 
 
 /************** End of URLEncoder Routing Rules ************************************/

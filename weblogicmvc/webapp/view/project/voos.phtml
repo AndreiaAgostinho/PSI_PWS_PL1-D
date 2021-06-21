@@ -1,17 +1,128 @@
 <?php
 use ArmoredCore\WebObjects\Layout;
 use ArmoredCore\WebObjects\Url;
+use ArmoredCore\WebObjects\Data;
+use Carbon\Carbon;
 
+
+$GLOBALS['precokm'] = 0.11;
+$searched_flight_onestop = array();
+$flights = Data::get('searched_flight');
+$searched_flight_onestop = Data::get('searched_flight_onestop');
+$searched_flight_twostop = Data::get('searched_flight_twostop');
 Layout::includeLayout('indexheader'); ?>
 
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  color: black;
+}
+</style>
 <header id="head">
 	<div class="container">
 		<form method="POST" action="<?php Url::toRoute('flight/find')?>">
-			Partida: <input type="text" name="partida" required>
-			Chegada: <input type="text" name="chegada" required>
+			Partida: <input type="search" name="partida" required>
+			Chegada: <input type="search" name="chegada" required>
+			<br>
 			<br>
 			<input type="submit">
 		</form>
+		<div class="container" id="tabela">
+		<h3>Voos</h3> <table class="container">
+		<?php 
+		if ($_SERVER['REQUEST_METHOD'] === 'POST')
+			{
+			    foreach ($flights as $flight) {
+			    			$datepartida = new Carbon($flight->departure->horariopartida);
+			    			$datechegada = new Carbon($flight->arrival->horariochegada);
+							echo "<tr>";
+							echo '<td>'.$flight->departure->airport->cidade.'</td>';
+							echo '<td>'.$flight->departure->airport->nome.'</td>';
+							echo '<td>'.$flight->arrival->airport->cidade.'</td>';
+							echo '<td>'.$flight->arrival->airport->nome.'</td>';
+							echo '<td>'.$flight->nvoo.'</td>';
+							echo '<td>'.$flight->distancia.'</td>';
+							echo '<td>'.$flight->comaerea.'</td>';
+							echo '<td>'.$datepartida->toCookieString().'</td>';
+							echo '<td>'.$datechegada->toCookieString().'</td>';
+							global $precokm;
+							$preco = $flight->distancia*$precokm;
+							echo '<td>'.$preco.'€</td>';
+							if($_SESSION['Tipo'] == 'P'){
+								echo '<td><a class="btn" href="'.Url::ToRoute("ticket/comprar", $flight->id).'">Comprar</a></td>';
+						}
+							echo "</tr>";
+						}
+			}
+			
+        ?>
+		</table>
+		<h3>Voos Com Ligação</h3> <table class='container'>
+			<?php
+			if ($_SERVER['REQUEST_METHOD'] === 'POST')
+			{
+				if(sizeof($searched_flight_onestop) > 0 ) {
+					for($i = 0; $i < sizeof($searched_flight_onestop); $i++){
+				    		$datepartida = new Carbon($searched_flight_onestop[$i]->departure->horariopartida);
+				    		$datechegada = new Carbon($searched_flight_onestop[$i]->arrival->horariochegada);
+							echo "<tr>";
+							echo '<td>'.$searched_flight_onestop[$i]->departure->airport->cidade.'</td>';
+							echo '<td>'.$searched_flight_onestop[$i]->departure->airport->nome.'</td>';
+							echo '<td>'.$searched_flight_onestop[$i]->arrival->airport->cidade.'</td>';
+							echo '<td>'.$searched_flight_onestop[$i]->arrival->airport->nome.'</td>';
+							echo '<td>'.$searched_flight_onestop[$i]->nvoo.'</td>';
+							echo '<td>'.$searched_flight_onestop[$i]->distancia.'</td>';
+							echo '<td>'.$searched_flight_onestop[$i]->comaerea.'</td>';
+							echo '<td>'.$datepartida->toCookieString().'</td>';
+							echo '<td>'.$datechegada->toCookieString().'</td>';
+							if($i % 2 == 0){
+								global $precokm;
+								$preco = (($searched_flight_onestop[$i]->distancia + $searched_flight_onestop[$i+1]->distancia) * $precokm);
+								$preco = $preco - ($preco * 0.20);
+								echo '<td rowspan="2">'.$preco.'€</td>';
+								$stringflight = $searched_flight_onestop[$i]->id . "," . $searched_flight_onestop[$i+1]->id;
+								echo '<td rowspan="2"><a class="btn" href="'.Url::ToRoute("ticket/comprar", $stringflight).'">Comprar</a></td>';
+							}
+							echo "</tr>";
+						}
+					}
+				}
+			?>
+			</table>
+			<h3>Voos Com Duas Ligações</h3> <table class='container'>
+			<?php
+			if ($_SERVER['REQUEST_METHOD'] === 'POST')
+			{
+				if(sizeof($searched_flight_twostop) > 0 ) {
+					for($i = 0; $i < sizeof($searched_flight_twostop); $i++){
+				    		$datepartida = new Carbon($searched_flight_twostop[$i]->departure->horariopartida);
+				    		$datechegada = new Carbon($searched_flight_twostop[$i]->arrival->horariochegada);
+							echo "<tr>";
+							echo '<td>'.$searched_flight_twostop[$i]->departure->airport->cidade.'</td>';
+							echo '<td>'.$searched_flight_twostop[$i]->departure->airport->nome.'</td>';
+							echo '<td>'.$searched_flight_twostop[$i]->arrival->airport->cidade.'</td>';
+							echo '<td>'.$searched_flight_twostop[$i]->arrival->airport->nome.'</td>';
+							echo '<td>'.$searched_flight_twostop[$i]->nvoo.'</td>';
+							echo '<td>'.$searched_flight_twostop[$i]->distancia.'</td>';
+							echo '<td>'.$searched_flight_twostop[$i]->comaerea.'</td>';
+							echo '<td>'.$datepartida->toCookieString().'</td>';
+							echo '<td>'.$datechegada->toCookieString().'</td>';
+							if($i % 3 == 0){
+							global $precokm;
+							$preco = ($searched_flight_twostop[$i]->distancia + $searched_flight_twostop[$i+1]->distancia + $searched_flight_twostop[$i+2]->distancia) * $precokm;
+							$preco = $preco - ($preco * 0.25);
+							echo '<td rowspan="3">'.$preco.'€</td>';
+							$stringflight = $searched_flight_twostop[$i]->id. "," .$searched_flight_twostop[$i+1]->id. "," .$searched_flight_twostop[$i+2]->id;
+							echo '<td rowspan="3"><a class="btn" href="'.Url::ToRoute("ticket/comprar", $stringflight).'">Comprar</a></td>';
+						}
+							echo "</tr>";
+					}
+				}
+			}
+			?>
+	</table>
+	</div>
 	</div>
 </header>
 <?php Layout::includeLayout('footer') ?>

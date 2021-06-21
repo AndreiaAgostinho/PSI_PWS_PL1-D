@@ -1,0 +1,67 @@
+<?php
+use ArmoredCore\WebObjects\Layout;
+use ArmoredCore\WebObjects\Data;
+use ArmoredCore\WebObjects\URL;
+use Carbon\Carbon;
+
+$GLOBALS['precokm'] = 0.11;
+Layout::includeLayout('indexheader'); 
+$allflights = Data::get('allflight');
+?>
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  color: black;
+}
+</style>
+<header id="head">
+	<div class="container">
+		 <table class="container">
+		 <?php
+		 $precototal = 0;
+		 foreach($allflights as $allflight){
+		
+		 $flight = $allflight["flight"];
+		 $datepartida = new Carbon($flight->departure->horariopartida);
+		 $datechegada = new Carbon($flight->arrival->horariochegada);
+		 echo "<tr>";
+		 echo '<td>'.$flight->departure->airport->cidade.'</td>';
+		 echo '<td>'.$flight->departure->airport->nome.'</td>';
+		 echo '<td>'.$flight->arrival->airport->cidade.'</td>';
+		 echo '<td>'.$flight->arrival->airport->nome.'</td>';
+		 echo '<td>'.$flight->nvoo.'</td>';
+		 echo '<td>'.$flight->distancia.'</td>';
+		 echo '<td>'.$flight->comaerea.'</td>';
+		 echo '<td>'.$datepartida->toCookieString().'</td>';
+		 echo '<td>'.$datechegada->toCookieString().'</td>';
+		 global $precokm;
+		 $preco = $flight->distancia*$precokm;
+		 $precototal = $precototal + $preco;
+		 echo '<td>'.$preco.'€</td>';
+		 echo "</tr>";
+		}
+		 ?>
+		 </table>
+	</div>
+	<div class="container">
+		<form method="Post" action="<?php Url::toRoute('ticket/confirmcomprar')?> ">
+			<?php
+			$_SESSION["allflights"] = $allflights;
+			foreach($allflights as $allflight){
+				$lugar = $allflight["lugar"];
+		 		$horaembarque = $allflight["horaembarque"];
+		 		$portaembarque = $allflight["portaembarque"];
+
+			echo '<input type="text" name="horarioembarque" value="'.$horaembarque.'" readonly>';
+			echo '<input type="text" name="lugar" value="'.$lugar.'" readonly>';
+			echo '<input type="text" name="portaembarque" value="'.$portaembarque.'" readonly><br>';
+			}
+			echo '<input type="text" name="valor" value="'.$precototal.' €"readonly>';
+			?>
+			<br>
+			<input type="submit" value="Comprar Bilhete">
+		</form>
+</header>
+
+<?php Layout::includeLayout('footer') ?>

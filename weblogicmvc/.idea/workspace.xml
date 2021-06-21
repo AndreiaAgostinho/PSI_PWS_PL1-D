@@ -150,6 +150,9 @@
       <path value="$PROJECT_DIR$/vendor/Symfony/polyfill-php80" />
     </include_path>
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="1" />
+  </component>
   <component name="ProjectId" id="1ZA5DMEVoRQ6Eu1IVf9Y3ueUDaG" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -252,6 +255,8 @@
       <workItem from="1621946019087" duration="1208000" />
       <workItem from="1621949904314" duration="1293000" />
       <workItem from="1622118325448" duration="1103000" />
+      <workItem from="1624126897141" duration="350000" />
+      <workItem from="1624219173270" duration="40000" />
     </task>
     <servers />
   </component>

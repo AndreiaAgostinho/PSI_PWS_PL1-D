@@ -4,6 +4,8 @@ use ArmoredCore\Interfaces\ResourceControllerInterface;
 use ArmoredCore\WebObjects\Post;
 use ArmoredCore\WebObjects\Redirect;
 use ArmoredCore\WebObjects\View;
+use ArmoredCore\WebObjects\Data;
+use Carbon\Carbon;
 
 /**
  * CRUD Resource Controller for ActiveRecord Model ticket
@@ -113,6 +115,79 @@ class ticketController extends BaseController implements ResourceControllerInter
 		$ticket = ticket::find([$id]);
 		$ticket->delete();
 		Redirect::toRoute('ticket/index');
+	}
+
+	public function comprar($id_one){
+
+		$id = explode(",", $id_one);
+		for($i = 0; $i < sizeof($id); $i++){
+
+			$flight = flight::find([$id[$i]]);
+			$departure = new Carbon($flight->departure->horariopartida);
+		
+			$horaembarque = $departure->subHours(1);
+
+			$Letter = array('A','B','C','D','E','F');
+		
+			$lugar = rand(1,70) . $Letter[rand(0,5)];
+
+			$portaembarque = rand(1, 20);
+
+			$oneflight = array(
+			'flight' => $flight, 
+			'horaembarque' => $horaembarque,
+			'lugar' => $lugar, 
+			'portaembarque' => $portaembarque
+			);
+
+			$allflights[$i] = $oneflight;
+
+		}
+		View::make('project.comprarbilhete', ['allflight' => $allflights]);
+	}
+
+	public function confirmcomprar(){
+
+
+		$allflights = $_SESSION["allflights"];
+		
+		$_SESSION["allflights"] = null;
+
+		$bilhete = array(
+		'horacompra' => Carbon::now(),
+		'idaevolta' => 'I',
+		'checkin' => 'N',
+		'valor' => Post::get('valor'),
+		'people_id' => $_SESSION['Id']
+		);
+
+		$ticket = new ticket($bilhete);
+
+		if($ticket->is_valid()){
+		    $ticket->save();
+			
+		    $ticket = ticket::last();
+
+		    foreach ($allflights as $allflight) {
+		    	
+		    	$bilhete_voo = array(
+		    	'horarioembarque' => $allflight["horaembarque"],
+		    	'lugar' =>  $allflight["lugar"],
+		    	'portaembarque' => $allflight["portaembarque"],
+		    	'flight_id' => $allflight["flight"]->id,
+		    	'ticket_id' => $ticket->id
+		    	);
+
+				$ticketflight = new ticketsflight($bilhete_voo);
+
+				if($ticketflight->is_valid()){
+		    		$ticketflight->save();
+				}
+		    }
+
+			View::make('project.pagamento', ['valor' => Post::get('valor'), 'referencia' => rand(000000000, 999999999), 'entidade' => 15278]);
+		   
+		}
 	}
 }
 

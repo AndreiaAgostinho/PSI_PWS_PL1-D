@@ -1,12 +1,81 @@
 <?php
 use ArmoredCore\WebObjects\Layout;
+use ArmoredCore\WebObjects\Data;
+use ArmoredCore\WebObjects\URL;
+use Carbon\Carbon;
 
-Layout::includeLayout('indexheader'); ?>
-
+Layout::includeLayout('indexheader'); 
+$people = Data::get('people');
+$allflights = Data::get('allflights');
+$var = true;
+?>
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  color: black;
+}
+</style>
 <header id="head">
 	<div class="container">
-		<h1>:)</h1>
+		<form method="post" action="<?php Url::toRoute('pessoa/update')?>">
+		Nome: <input type="text" name="nome" value="<?php echo$people->nome; ?>" required>
+		<label for="m">Masculino</label>
+		<?php if($people->sexo == "M"){
+			echo '<input type="radio" id="m" name="sexo" value="M" checked required>
+		<label for="f">Feminino</label>
+		<input type="radio" id="f" name="sexo" value="F" required>';
+		}else{
+			echo '<input type="radio" id="m" name="sexo" value="M" required>
+		<label for="f">Feminino</label>
+		<input type="radio" id="f" name="sexo" value="F" checked required>';
+		}
+		?>
+		Data de Nascimento: <input type="date" name="dtaNascimento" value="<?php echo $people->dtanascimento; ?>" required>
+		NIF: <input type="text" name="nif" value="<?php echo $people->nif; ?>" required>
+		Morada: <input type="text" name="morada" value="<?php echo $people->morada; ?>" required>
+		Contacto: <input type="text" name="contacto" value="<?php echo $people->contacto; ?>"required>
+		Username: <input type="text" name="username" value="<?php echo $people->username; ?>" 
+		readonly>
+		<input type="hidden" name="tipo" value="P">
+		<input type="submit">
+	</form>
 	</div>
+	<br>
+	<div class="container">
+		<p>Historico de Bilhetes</p>
+		<?php
+		for($i = 0; $i < sizeof($allflights); $i++){
+			$horaembarque = new Carbon($allflights[$i]->horarioembarque);
+			$horapartida = new Carbon($allflights[$i]->flight->departure->horariopartida);
+			$horachegada = new Carbon($allflights[$i]->flight->arrival->horariochegada);
+			if($var){
+				$var = false;
+				echo "<table class='container'>";	
+			}
+			echo '<tr>';
+			echo '<td>'.$allflights[$i]->flight->nvoo.'</td>';
+		 	echo '<td>'.$allflights[$i]->flight->departure->airport->cidade.'</td>';
+		 	echo '<td>'.$horapartida->toCookieString().'</td>';
+		 	echo '<td>'.$allflights[$i]->flight->arrival->airport->cidade.'</td>';
+		 	echo '<td>'.$horachegada->toCookieString().'</td>';
+		 	echo '<td>'.$allflights[$i]->lugar.'</td>';
+		 	echo '<td>'.$horaembarque->toCookieString().'</td>';
+		 	echo '<td>'.$allflights[$i]->portaembarque.'</td>';
+		 	echo '<td>'.$allflights[$i]->ticket->valor.' €</td>';
+		 	echo '<tr>';
+		 	if($i+1 != sizeof($allflights)){
+		 		if($allflights[$i]->ticket->horacompra != $allflights[$i+1]->ticket->horacompra){
+		 			echo "</table>";
+		 			echo "<br>";
+		 			$var = true;
+		 		}
+		 	}
+		 }
+		?>
+		</table>
+	</div>
+
 </header>
 
 <?php Layout::includeLayout('footer') ?>

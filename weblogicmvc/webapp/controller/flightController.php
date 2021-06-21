@@ -4,6 +4,8 @@ use ArmoredCore\Interfaces\ResourceControllerInterface;
 use ArmoredCore\WebObjects\Post;
 use ArmoredCore\WebObjects\Redirect;
 use ArmoredCore\WebObjects\View;
+use Carbon\Carbon;
+
 
 /**
  * CRUD Resource Controller for ActiveRecord Model flight
@@ -64,18 +66,18 @@ class flightController extends BaseController implements ResourceControllerInter
 			'airport_id' => Post::get('airport_idC')
 		);
 
-		$arrive = new arrive($chegada);
+		$arrival = new arrival($chegada);
 
-		$arrive->save();
+		$arrival->save();
 
-		$lastarrive = arrive::last();
+		$lastarrival = arrival::last();
 
 		$voo = array(
 			'nVoo' => Post::get("nVoo"),
 			'distancia' => Post::get("distancia"),
 			'comAerea' => Post::get("comAerea"),
 			'departure_id' => $lastdeparture->id,
-			'arrive_id' => $lastarrive->id,
+			'arrival_id' => $lastarrival->id,
 			'airplane_id' => Post::get("airplane_id")
 			);
 
@@ -83,7 +85,7 @@ class flightController extends BaseController implements ResourceControllerInter
 
 		if($flight->is_valid()){
 		    $flight->save();
-		    Redirect::toRoute('flight/index');
+		    Redirect::toRoute('flight/gestao');
 		} else {
 		    //redirect to form with data and errors
 		    Redirect::flashToRoute('flight/create', ['flight' => $flight]);
@@ -147,8 +149,16 @@ class flightController extends BaseController implements ResourceControllerInter
 	public function destroy($id)
 	{
 		$flight = flight::find([$id]);
+		$departure = departure::find([$flight->departure_id]);
+		$arrival = arrival::find([$flight->arrival_id]);
+
+
+
 		$flight->delete();
-		Redirect::toRoute('flight/index');
+		$departure->delete();
+		$arrival->delete();
+
+		Redirect::toRoute('flight/gestao');
 	}
 
 	public function search(){
@@ -162,6 +172,110 @@ class flightController extends BaseController implements ResourceControllerInter
 		$airplanes = airplane::all();
 		$airports = airport::all();
 	return View::make('project.gestaovoos', ['flights' => $flights, 'airplanes' => $airplanes,'airports' => $airports]);
+
+	}
+
+	public function find(){
+
+		$post_departure = Post::get("partida");
+		$post_arrival = Post::get("chegada");
+
+		$search_airport_departure = airport::find_all_by_cidade([$post_departure]);
+		$search_airport_arrival = airport::find_all_by_cidade([$post_arrival]);
+
+
+		foreach($search_airport_departure as $airport){
+			$departures = departure::find_all_by_airport_id([$airport->id]);
+		}
+		foreach($search_airport_arrival as $airport){
+			$arrivals = arrival::find_all_by_airport_id([$airport->id]);
+		}
+
+		$i = 0;
+		$searched_flight = array();
+		foreach ($departures as $departure) {
+			foreach($arrivals as $arrival){
+
+				$flights = flight::find_all_by_departure_id_and_arrival_id([$departure->id], [$arrival->id]);
+
+				foreach($flights as $flight){
+					$searched_flight[$i] = $flight;
+					$i++;
+				}
+			}
+		}
+
+		$i = 0;
+		$searched_flight_onestop = array();
+		foreach ($departures as $departure) {
+			$flight_departures = flight::find_all_by_departure_id([$departure->id]);
+			foreach($arrivals as $arrival){
+			
+				$flight_arrivals = flight::find_all_by_arrival_id([$arrival->id]);
+
+				foreach($flight_departures as $flight_departure){
+					foreach($flight_arrivals as $flight_arrival){
+						
+						$date_arrival = new Carbon($flight_departure->arrival->horariochegada);
+						$date_departure = new Carbon($flight_arrival->departure->horariopartida);
+
+						if(($flight_departure->arrival->airport->cidade == $flight_arrival->departure->airport->cidade) && ($date_departure->diffInHours($date_arrival, false) <= 4)){
+							$searched_flight_onestop[$i] = $flight_departure;
+							$i++;
+							$searched_flight_onestop[$i] = $flight_arrival;
+							$i++;
+
+						}
+					}
+				}
+			}
+		}
+
+		$searched_flight_twostop = array();
+
+		$i = 0;
+		$allflights = flight::all();
+		foreach ($departures as $departure) {
+			$flight_departures = flight::find_all_by_departure_id([$departure->id]);
+			foreach($arrivals as $arrival){
+			
+				$flight_arrivals = flight::find_all_by_arrival_id([$arrival->id]);
+
+				foreach($flight_departures as $flight_departure){
+					foreach($flight_arrivals as $flight_arrival){
+						
+						$date_arrival = new Carbon($flight_departure->arrival->horariochegada);
+						$date_departure = new Carbon($flight_arrival->departure->horariopartida);
+
+						foreach($allflights as $allflight){
+
+							$allflight_arrival = new Carbon($allflight->arrival->horariochegada);
+							$allflight_departure = new Carbon($allflight->departure->horariopartida);
+							
+
+							if(($flight_departure->arrival->airport->cidade == $allflight->departure->airport->cidade) && ($flight_arrival->departure->airport->cidade == $allflight->arrival->airport->cidade) && ($date_arrival->diffInHours($allflight_departure, false) <= 4) && ($date_departure->diffInHours($allflight_arrival, false) <= 4)){
+
+
+								$searched_flight_twostop[$i] = $flight_departure;
+								$i++;
+
+								$searched_flight_twostop[$i] = $allflight;
+								$i++;
+
+								$searched_flight_twostop[$i] = $flight_arrival;
+								$i++;
+
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+
+		return View::make('project.voos', ['searched_flight' => $searched_flight, 'searched_flight_onestop' => $searched_flight_onestop, 'searched_flight_twostop' => $searched_flight_twostop]);
+
 
 	}
 }

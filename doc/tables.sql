@@ -21,6 +21,7 @@ create table tickets(
     horaCompra datetime	not null default current_timestamp,
     checkin	 enum('S','N') not null,
     idaEVolta enum('I', 'V') not null,
+    valor double	not null,
     people_id int unsigned not null,
     constraint pk_ticket_id primary key (ticket_id),
     constraint fk_ticket_id foreign key (people_id) references peoples(people_id)) 
@@ -52,14 +53,14 @@ create table departures(
     constraint fk_departure_aero foreign key (airport_id) references airports(airport_id)
 ) engine=InnoDB;
 
-create table arrives(
-	arrive_id int unsigned auto_increment,
+create table arrivals(
+	arrival_id int unsigned auto_increment,
     terminal varchar(2) not null,
     horarioChegada datetime not null,
     pista varchar(3) not null,
     airport_id int unsigned not null,
-    constraint pk_arrive_id primary key (arrive_id),
-    constraint fk_arrive_aero foreign key (airport_id) references airports(airport_id)
+    constraint pk_arrival_id primary key (arrival_id),
+    constraint fk_arrival_aero foreign key (airport_id) references airports(airport_id)
 ) engine=InnoDB;
 
 create table flights(
@@ -68,11 +69,11 @@ create table flights(
     distancia double not null,
     comAerea  varchar(20) not null,
     departure_id int unsigned not null,
-    arrive_id int unsigned not null,
+    arrival_id int unsigned not null,
     airplane_id	int unsigned not null,
     constraint pk_flight_id primary key (flight_id),
     constraint fk_flight_part foreign key (departure_id) references departures(departure_id),
-    constraint fk_flight_cheg foreign key (arrive_id) references arrives(arrive_id),
+    constraint fk_flight_cheg foreign key (arrival_id) references arrivals(arrival_id),
 	constraint fk_flight_avi foreign key (airplane_id) references airplanes(airplane_id)
 ) engine=InnoDB;
 

@@ -7,10 +7,13 @@ Layout::includeLayout('indexheader'); ?>
     <header id="head">
         <div class="container" style="background-color: #00b0e8; width: 500px; padding: 20px; border-bottom: 5px">
             <div class="row">
-                <h1 class="lead"><b>FlightTravelAir</b><br><small><b>Armored</b>Core v0.91</small><br>MVC Reference Framework</h1>
-
-                <p><a class="btn btn-action btn-lg" role="button" href="<?= Url::toRoute('home/start')?>">PROCURAR</a></p>
-                <p class="small">By<i> Sílvio Priem Mendes, PhD</i></p>
+               <form method="POST" action="<?php Url::toRoute('flight/find')?>">
+            Partida: <input type="search" name="partida" required>
+            Chegada: <input type="search" name="chegada" required>
+            <br>
+            <br>
+            <input type="submit">
+        </form>
             </div>
         </div>
     </header>

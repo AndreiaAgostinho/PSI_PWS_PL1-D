@@ -5,9 +5,16 @@ use \ActiveRecord\Model;
 class flight extends Model
 {
 	static $has_many = array(
-		array('tickets_flights'),
-		array('tickets', 'through' => 'tickets_flights'),
-		array('departures'),
-		array('arrives')
+		array('ticketsflights'),
+		array('tickets', 'through' => 'ticketsflights')
+		
+	);
+
+	static $belongs_to = array(
+		array('departure'),
+		array('arrival'),
+		array('airport', 'through' => 'departure'),
+		array('airport', 'through' => 'arrival'),
+		array('airplane')
 	);
 }

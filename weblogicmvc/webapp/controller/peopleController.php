@@ -47,7 +47,7 @@ class peopleController extends BaseController implements ResourceControllerInter
 
 		if($people->is_valid()){
 		    $people->save();
-		    Redirect::toRoute('flight/gestao');
+		    Redirect::toRoute('home/login');
 		} else {
 		    //redirect to form with data and errors
 		    Redirect::flashToRoute('people/create', ['people' => $people]);
@@ -92,12 +92,12 @@ class peopleController extends BaseController implements ResourceControllerInter
 	{
 		//find resource (activerecord/model) instance where PK = $id
 		//your form name fields must match the ones of the table fields
-		$people = people::find([$id]);
+		$people = people::find([$_SESSION["Id"]]);
 		$people->update_attributes(Post::getAll());
 
 		if($people->is_valid()){
 		    $people->save();
-		    Redirect::toRoute('people/index');
+		    Redirect::toRoute('pessoa/perfil');
 		} else {
 		    //redirect to form with data and errors
 		    Redirect::flashToRoute('people/edit', ['people' => $people]);
@@ -134,6 +134,7 @@ class peopleController extends BaseController implements ResourceControllerInter
                 	{
                 		$_SESSION["Tipo"] = $pessoa->tipo;
                 		$_SESSION["Nome"] = $pessoa->nome;
+                		$_SESSION["Id"] = $pessoa->id;
                 	}
 
                     Redirect::toRoute('home/index');
@@ -145,13 +146,29 @@ class peopleController extends BaseController implements ResourceControllerInter
         }
 
     public function perfil(){
-    	View::Make('project.perfil');
+
+    	$people = people::find([$_SESSION["Id"]]);
+    	$tickets = ticket::find_all_by_people_id([$_SESSION["Id"]]);
+
+    	$i = 0;
+    	$allflights = array();
+    	foreach($tickets as $ticket){
+    		$ticketsflights = ticketsflight::find_all_by_ticket_id([$ticket->id]);
+
+    		foreach($ticketsflights as $ticketsflight){
+    			$allflights[$i] = $ticketsflight;
+    			$i++;
+    		}
+    	}
+
+    	View::Make('project.perfil', ['people' => $people, 'allflights' => $allflights]);
     }  
 
         public function sair(){
         session_destroy();
     	$_SESSION["Tipo"] = null;
     	$_SESSION["Nome"] = null;
+    	$_SESSION["Id"] = null;
     	Redirect::toRoute('home/index');
     }
 
@@ -172,6 +189,19 @@ class peopleController extends BaseController implements ResourceControllerInter
 		} else {
 		    //redirect to form with data and errors
 		    Redirect::flashToRoute('people/create', ['people' => $people]);
+		}
+    }
+
+    public function atualizar(){
+    	$people = people::find([$_SESSION["Id"]]);
+		$people->update_attributes(Post::getAll());
+
+		if($people->is_valid()){
+		    $people->save();
+		    Redirect::toRoute('pessoa/perfil');
+		} else {
+		    //redirect to form with data and errors
+		    Redirect::flashToRoute('people/edit', ['people' => $people]);
 		}
     }
 }
