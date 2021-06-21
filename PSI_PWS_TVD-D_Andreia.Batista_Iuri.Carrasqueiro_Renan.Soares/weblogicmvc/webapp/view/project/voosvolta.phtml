@@ -1,0 +1,188 @@
+<?php
+use ArmoredCore\WebObjects\Layout;
+use ArmoredCore\WebObjects\Url;
+use ArmoredCore\WebObjects\Data;
+use Carbon\Carbon;
+
+$_SESSION['Volta'] = true;
+$GLOBALS['precokm'] = 0.11;
+$searched_flight_volta = Data::get('searched_flight_volta');
+$searched_flight_onestop_volta = Data::get('searched_flight_onestop_volta');
+$searched_flight_twostop_volta = Data::get('searched_flight_twostop_volta');
+$ida = Data::get('ida');
+Layout::includeLayout('indexheader'); ?>
+
+<style>
+table, th, td {
+	border-collapse: collapse;
+	color: black;
+	text-align: center;
+	border-bottom: 1px solid teal;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	background-color:  rgba(224, 224, 224, 0.4) ;
+}
+</style>
+<body id="head">
+	<div class="container">
+		<div class="container" id="tabela">
+			<?php 
+			if(sizeof($searched_flight_volta) != 0){
+				echo "<h2 style='color: teal; font-weight: bold; font-size: xx-large'>Voo Directo</h2>";
+				echo "<table class='container' style='width: 100%'>";
+				echo "<tr>";
+				echo "<th style='color: teal; font-weight: bold; font-size: medium;'>Cidade</th>";
+				echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Nome do Aeroporto</th>";
+				echo "<th style='color: teal; font-weight: bold; font-size: medium;'>Cidade</th>";
+				echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Nome do Aeroporto</th>";
+				echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Número Voo</th>";
+				echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Distancia</th>";
+				echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Companhia Aérea</th>";
+				echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Data Partida</th>";
+				echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Data Chegada</th>";
+				echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Preço</th>";
+				echo "</tr>";
+			}
+			foreach ($searched_flight_volta as $flight) {
+				
+
+				$datepartida = new Carbon($flight->departure->horariopartida);
+				$datechegada = new Carbon($flight->arrival->horariochegada);
+				
+				echo "<tr>";
+				echo '<td>'.$flight->departure->airport->cidade.'</td>';
+				echo '<td>'.$flight->departure->airport->nome.'</td>';
+				echo '<td>'.$flight->arrival->airport->cidade.'</td>';
+				echo '<td>'.$flight->arrival->airport->nome.'</td>';
+				echo '<td>'.$flight->nvoo.'</td>';
+				echo '<td>'.$flight->distancia.'</td>';
+				echo '<td>'.$flight->comaerea.'</td>';
+				echo '<td>'.$datepartida->toCookieString().'</td>';
+				echo '<td>'.$datechegada->toCookieString().'</td>';
+				
+				global $precokm;
+				$preco = $flight->distancia*$precokm;
+
+				$stringflight = $ida . "," .$flight->id;
+				echo '<td>'.$preco.'€</td>';
+				if($_SESSION['Tipo'] == 'P'){
+					echo '<td><a class="btn" href="'.Url::ToRoute("ticket/comprar", $stringflight).'">Comprar</a></td>';
+				}
+				echo "</tr>";
+			}
+			
+			
+			?>
+		</table>
+		<?php
+		if(sizeof($searched_flight_onestop_volta) > 0 ) {
+			echo "<h2 style='color: teal; font-weight: bold; font-size: xx-large'>Voos Com Ligação</h2>";
+			echo "<table class='container'  style='width: 100%'>";
+			echo "<tr>";
+			echo "<th style='color: teal; font-weight: bold; font-size: medium;'>Cidade</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Nome do Aeroporto</th>";
+			echo "<th style='color: teal; font-weight: bold; font-size: medium;'>Cidade</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Nome do Aeroporto</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Número Voo</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Distancia</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Companhia Aérea</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Data Partida</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Data Chegada</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Preço</th>";
+			echo "</tr>";
+
+		}
+		if(sizeof($searched_flight_onestop_volta) > 0 ) {
+			for($i = 0; $i < sizeof($searched_flight_onestop_volta); $i++){
+				$datepartida = new Carbon($searched_flight_onestop_volta[$i]->departure->horariopartida);
+				$datechegada = new Carbon($searched_flight_onestop_volta[$i]->arrival->horariochegada);
+				echo "<tr>";
+				echo '<td>'.$searched_flight_onestop_volta[$i]->departure->airport->cidade.'</td>';
+				echo '<td>'.$searched_flight_onestop_volta[$i]->departure->airport->nome.'</td>';
+				echo '<td>'.$searched_flight_onestop_volta[$i]->arrival->airport->cidade.'</td>';
+				echo '<td>'.$searched_flight_onestop_volta[$i]->arrival->airport->nome.'</td>';
+				echo '<td>'.$searched_flight_onestop_volta[$i]->nvoo.'</td>';
+				echo '<td>'.$searched_flight_onestop_volta[$i]->distancia.'</td>';
+				echo '<td>'.$searched_flight_onestop_volta[$i]->comaerea.'</td>';
+				echo '<td>'.$datepartida->toCookieString().'</td>';
+				echo '<td>'.$datechegada->toCookieString().'</td>';
+				if($i % 2 == 0){
+					global $precokm;
+					$preco = (($searched_flight_onestop_volta[$i]->distancia + $searched_flight_onestop_volta[$i+1]->distancia) * $precokm);
+					$preco = $preco - ($preco * 0.20);
+
+					$stringflight = $ida . "," . $searched_flight_onestop_volta[$i]->id . "," . $searched_flight_onestop_volta[$i+1]->id;
+
+					echo '<td rowspan="2">'.$preco.'€</td>';
+					if($_SESSION['Tipo'] == 'P'){
+						echo '<td rowspan="2"><a class="btn" href="'.Url::ToRoute("ticket/comprar", $stringflight).'">Comprar</a></td>';
+					}
+				}
+				echo "</tr>";
+			}
+		}
+		
+		?>
+	</table>
+	<?php
+	if(sizeof($searched_flight_twostop_volta) > 0 ) {
+		echo "<h2 style='color: teal; font-weight: bold; font-size: xx-large'>Voos Com Duas Ligações</h2>";
+		echo "<table class='container' style='width: 100%'>";
+		echo "<tr>";
+		echo "<th style='color: teal; font-weight: bold; font-size: medium;'>Cidade</th>";
+		echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Nome do Aeroporto</th>";
+		echo "<th style='color: teal; font-weight: bold; font-size: medium;'>Cidade</th>";
+		echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Nome do Aeroporto</th>";
+		echo "<th style='color:teal; font-weight: bold; font-size: medium;'>Número Voo</th>";
+		echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Distancia</th>";
+		echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Companhia Aérea</th>";
+		echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Data Partida</th>";
+		echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Data Chegada</th>";
+		echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: medium;'>Preço</th>";
+		echo "</tr>";
+	}
+	if(sizeof($searched_flight_twostop_volta) > 0 ) {
+		for($i = 0; $i < sizeof($searched_flight_twostop_volta); $i++){
+			$datepartida = new Carbon($searched_flight_twostop_volta[$i]->departure->horariopartida);
+			$datechegada = new Carbon($searched_flight_twostop_volta[$i]->arrival->horariochegada);
+			echo "<tr>";
+			echo '<td>'.$searched_flight_twostop_volta[$i]->departure->airport->cidade.'</td>';
+			echo '<td>'.$searched_flight_twostop_volta[$i]->departure->airport->nome.'</td>';
+			echo '<td>'.$searched_flight_twostop_volta[$i]->arrival->airport->cidade.'</td>';
+			echo '<td>'.$searched_flight_twostop_volta[$i]->arrival->airport->nome.'</td>';
+			echo '<td>'.$searched_flight_twostop_volta[$i]->nvoo.'</td>';
+			echo '<td>'.$searched_flight_twostop_volta[$i]->distancia.'</td>';
+			echo '<td>'.$searched_flight_twostop_volta[$i]->comaerea.'</td>';
+			echo '<td>'.$datepartida->toCookieString().'</td>';
+			echo '<td>'.$datechegada->toCookieString().'</td>';
+			if($i % 3 == 0){
+				global $precokm;
+
+				$preco = ($searched_flight_twostop_volta[$i]->distancia + $searched_flight_twostop_volta[$i+1]->distancia + $searched_flight_twostop_volta[$i+2]->distancia) * $precokm;
+				$preco = $preco - ($preco * 0.25);
+
+				$stringflight = $ida . "," . $searched_flight_twostop_volta[$i]->id. "," .$searched_flight_twostop_volta[$i+1]->id. "," .$searched_flight_twostop_volta[$i+2]->id;
+
+				echo '<td rowspan="3">'.$preco.'€</td>';
+				if($_SESSION['Tipo'] == 'P'){
+					echo '<td rowspan="3"><a class="btn" href="'.Url::ToRoute("ticket/comprar", $stringflight).'">Comprar</a></td>';
+				}
+			}
+			echo "</tr>";
+		}
+	}
+	
+	if((sizeof($searched_flight_twostop_volta) == 0 ) && (sizeof($searched_flight_onestop_volta) == 0 ) && (sizeof($searched_flight_volta) == 0)){
+		echo "<h2 style='color: teal; font-weight: bold; font-size: xx-large'>Não existem voos disponiveis</h2>";
+	}
+	?>
+</table>
+</div>
+</div>
+<br>
+<br>
+<br>
+<br>
+</body>
+<?php Layout::includeLayout('footer') ?>

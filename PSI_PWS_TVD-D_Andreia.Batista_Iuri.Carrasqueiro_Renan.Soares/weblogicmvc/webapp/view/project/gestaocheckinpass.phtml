@@ -1,0 +1,56 @@
+<?php
+use ArmoredCore\WebObjects\Layout;
+use ArmoredCore\WebObjects\Url;
+use ArmoredCore\WebObjects\Data;
+use ArmoredCore\WebObjects\Redirect;
+
+Layout::includeLayout('indexheader'); 
+$ticketsflight = Data::get('ticketsflight');
+
+
+?>
+<style>
+table, th, td {
+	border-collapse: collapse;
+	color: black;
+	text-align: center;
+	border-bottom: 1px solid teal;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	background-color:  rgba(224, 224, 224, 0.4) ;
+
+}
+</style>
+<body id="head">
+	<div class="container ">
+		<h2 style='color: teal; font-weight: bold; font-size: xx-large;'>Checkin</h2> <table class="container" style='width: 85%;'>
+			<br>
+			<br>
+			<?php
+
+			echo "<tr>";
+			echo "<th style='color: teal; font-weight: bold; font-size: large;'>Passageiro</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>NIF</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Lugar</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: large;'>Checkin?</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: large;'>Fazer Checkin</th>";
+			echo "</tr>";
+
+
+			foreach ($ticketsflight as $tickets) {
+				echo "<tr>";
+				echo '<td>'.$tickets->ticket->people->nome.'</td>';
+				echo '<td>'.$tickets->ticket->people->nif.' </td>';
+				echo '<td>'.$tickets->lugar.' </td>';
+				echo '<td>'.$tickets->checkin.' </td>';
+				echo '<td><a class="btn" href="'.Url::ToRoute("ticket/confirmcheckin", $tickets->id).'">Fazer Checkin</a></td>';
+				echo "</tr>";
+			}
+			?>
+		</table>
+		<br>
+
+	</div>
+</body>
+<?php Layout::includeLayout('footer') ?>
