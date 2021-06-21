@@ -1,0 +1,38 @@
+<?php
+use ArmoredCore\WebObjects\Layout;
+use ArmoredCore\WebObjects\Url;
+use ArmoredCore\WebObjects\Data;
+use ArmoredCore\WebObjects\Redirect;
+
+Layout::includeLayout('indexheader'); 
+$peoples = Data::get('peoples');
+
+?>
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  color: black;
+}
+</style>
+<header id="head">
+	<div class="container ">
+		<h3>Pessoal</h3> <table class="container">
+		<?php 
+
+			//foreach ($peoples as $people) {
+				echo "<tr>";
+				echo '<td>123</td>';
+				echo '<td>123</td>';
+				echo '<td>123</td>';
+				echo '<td><a class="btn" href="'.Url::ToRoute("pessoa/destroy", $people->id).'">123</a></td>';
+				echo "</tr>";
+			//}
+		?>
+
+		</table>
+		<br>
+
+	</div>
+</header>
+<?php Layout::includeLayout('footer') ?>
