@@ -46,11 +46,11 @@ class ticketsflightController extends BaseController implements ResourceControll
 		$ticketsflight = new ticketsflight(Post::getAll());
 
 		if($ticketsflight->is_valid()){
-		    $ticketsflight->save();
-		    Redirect::toRoute('ticketsflight/index');
+			$ticketsflight->save();
+			Redirect::toRoute('ticketsflight/index');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('ticketsflight/create', ['ticketsflight' => $ticketsflight]);
+			Redirect::flashToRoute('ticketsflight/create', ['ticketsflight' => $ticketsflight]);
 		}
 	}
 
@@ -65,7 +65,7 @@ class ticketsflightController extends BaseController implements ResourceControll
 		if (is_null($ticketsflight)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('ticketsflight.show', ['ticketsflight' => $ticketsflight]);
+			return View::make('ticketsflight.show', ['ticketsflight' => $ticketsflight]);
 		}
 	}
 
@@ -80,7 +80,7 @@ class ticketsflightController extends BaseController implements ResourceControll
 		if (is_null($ticketsflight)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('ticketsflight.edit', ['ticketsflight' => $ticketsflight]);
+			return View::make('ticketsflight.edit', ['ticketsflight' => $ticketsflight]);
 		}
 	}
 
@@ -96,11 +96,11 @@ class ticketsflightController extends BaseController implements ResourceControll
 		$ticketsflight->update_attributes(Post::getAll());
 
 		if($ticketsflight->is_valid()){
-		    $ticketsflight->save();
-		    Redirect::toRoute('ticketsflight/index');
+			$ticketsflight->save();
+			Redirect::toRoute('ticketsflight/index');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('ticketsflight/edit', ['ticketsflight' => $ticketsflight]);
+			Redirect::flashToRoute('ticketsflight/edit', ['ticketsflight' => $ticketsflight]);
 		}
 	}
 

@@ -47,11 +47,10 @@ class airportController extends BaseController implements ResourceControllerInte
 		$airport = new airport(Post::getAll());
 
 		if($airport->is_valid()){
-		    $airport->save();
-		    Redirect::toRoute('airport/gestao');
+			$airport->save();
+			Redirect::toRoute('airport/gestao');
 		} else {
-		    //redirect to form with data and errors
-		    Redirect::flashToRoute('airport/create', ['airport' => $airport]);
+			Redirect::toRoute('airport/gestao');
 		}
 	}
 
@@ -66,7 +65,7 @@ class airportController extends BaseController implements ResourceControllerInte
 		if (is_null($airport)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('airport.show', ['airport' => $airport]);
+			return View::make('airport.show', ['airport' => $airport]);
 		}
 	}
 
@@ -81,7 +80,7 @@ class airportController extends BaseController implements ResourceControllerInte
 		if (is_null($airport)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('airport.edit', ['airport' => $airport]);
+			return View::make('airport.edit', ['airport' => $airport]);
 		}
 	}
 
@@ -97,11 +96,11 @@ class airportController extends BaseController implements ResourceControllerInte
 		$airport->update_attributes(Post::getAll());
 
 		if($airport->is_valid()){
-		    $airport->save();
-		    Redirect::toRoute('airport/index');
+			$airport->save();
+			Redirect::toRoute('airport/index');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('airport/edit', ['airport' => $airport]);
+			Redirect::flashToRoute('airport/edit', ['airport' => $airport]);
 		}
 	}
 

@@ -46,11 +46,11 @@ class airplaneController extends BaseController implements ResourceControllerInt
 		$airplane = new airplane(Post::getAll());
 
 		if($airplane->is_valid()){
-		    $airplane->save();
-		    Redirect::toRoute('airplane/gestaoavioes');
+			$airplane->save();
+			Redirect::toRoute('airplane/gestaoavioes');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('airplane/create', ['airplane' => $airplane]);
+			Redirect::toRoute('airplane/gestaoavioes');
 		}
 	}
 
@@ -65,7 +65,7 @@ class airplaneController extends BaseController implements ResourceControllerInt
 		if (is_null($airplane)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('airplane.show', ['airplane' => $airplane]);
+			return View::make('airplane.show', ['airplane' => $airplane]);
 		}
 	}
 
@@ -80,7 +80,7 @@ class airplaneController extends BaseController implements ResourceControllerInt
 		if (is_null($airplane)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('airplane.edit', ['airplane' => $airplane]);
+			return View::make('airplane.edit', ['airplane' => $airplane]);
 		}
 	}
 
@@ -96,11 +96,11 @@ class airplaneController extends BaseController implements ResourceControllerInt
 		$airplane->update_attributes(Post::getAll());
 
 		if($airplane->is_valid()){
-		    $airplane->save();
-		    Redirect::toRoute('airplane/index');
+			$airplane->save();
+			Redirect::toRoute('airplane/index');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('airplane/edit', ['airplane' => $airplane]);
+			Redirect::flashToRoute('airplane/edit', ['airplane' => $airplane]);
 		}
 	}
 

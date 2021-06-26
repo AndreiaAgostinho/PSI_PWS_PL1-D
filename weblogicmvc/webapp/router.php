@@ -48,8 +48,12 @@ Router::get('flight/destroy', 'flightController/destroy');
 Router::post('home/voos', 'flightController/find');
 Router::post('home/index', 'flightController/find');
 
+Router::get('flight/volta', 'flightController/volta');
 Router::get('ticket/comprar', 'ticketController/comprar');
 Router::Post('ticket/comprar', 'ticketController/confirmcomprar');
+Router::get('ticket/checkin', 'ticketController/checkin');
+Router::get('ticket/checkinpassengers', 'ticketController/checkinpassengers');
+Router::get('ticket/confirmcheckin', 'ticketController/confirmcheckin');
 
 
 /************** End of URLEncoder Routing Rules ************************************/

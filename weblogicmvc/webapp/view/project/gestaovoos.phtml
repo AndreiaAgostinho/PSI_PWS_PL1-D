@@ -11,16 +11,37 @@ $airplanes = Data::get('airplanes');
 
 ?>
 <style>
-table,tr, th, td {
-  border: 1px solid;
-  border-collapse: collapse;
-  color: teal;
+table, th, td {
+	border-collapse: collapse;
+	color: black;
+	text-align: center;
+	border-bottom: 1px solid teal;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	background-color:  rgba(224, 224, 224, 0.4) ;
 }
+form{
+	color: teal;
+	font-weight: bold;
+	justify-content: space-around;
+	border: teal;
+
+}
+
 </style>
-<header id="head">
+<body id="head">
 	<div class="container">
-		<h2 style="font-weight: bold; font-size: xx-large">Voos</h2> <table class="container">
-		<?php 
+		<h2 style='color: teal; font-weight: bold; font-size: xx-large'>Voos</h2> <table class="container" style="border: #00b0e8; height: 30px; width: 100%;">
+			<?php 
+			echo "<tr>";
+			echo "<th style='color: teal; font-weight: bold; font-size: large;'>Número Voo</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Distancia</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Companhia Aérea</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Nome Aeroporto Partida</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Nome Aeroporto Destino</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: large;'>Eliminar <br> Entrada</th>";
+			echo "</tr>";
 			foreach ($flights as $flight) {
 				
 				echo "<tr>";
@@ -32,50 +53,55 @@ table,tr, th, td {
 				echo '<td><a class="btn" href="'.Url::ToRoute("flight/destroy", $flight->id).'">X</a></td>';
 				echo "</tr>";
 			}
-		?>
+			?>
 		</table>
 		<br>
-		<form method="POST" action="<?php Url::toRoute('flight/store')?>">
-			Número Voo: <input type="text" name="nVoo" required>
-			Distancia: <input type="number" name="distancia" required>
-			Companhia Aérea: <input type="text" name="comAerea" required>
-			Avião: <select name="airplane_id">
-				<?php
+		<br>
+		<br>
+		<br>
+		<div class="container" style="background-color:  rgba(224, 224, 224, 0.4) ; width: 100%; padding: 20px; border-bottom: 5px;">
+			<form method="POST" action="<?php Url::toRoute('flight/store')?>">
+				Número Voo: <input type="text" name="nVoo" required>
+				Distancia: <input type="number" name="distancia" required>
+				Companhia Aérea: <input type="text" name="comAerea" required>
+				Avião: <select name="airplane_id">
+					<?php
 					foreach($airplanes as $airplane){
 						echo '<option value='.$airplane->id.'>'.$airplane->marca.'-'.$airplane->modelo.'</option>';
 					}
-				?>
-			</select>
-			<br>
-			<p>Partida</p>
-			Terminal: <input type="text" name="terminal" required>
-			Horario de Partida: <input type="time" name="horarioPartida" required>
-			Pista: <input type="text" name="pista" required>
-			Aeroporto: <select name= "airport_id">
-				<?php
+					?>
+				</select>
+				<br>
+				<h2 style='color: teal; font-weight: bold; font-size: large'>Partida</h2>
+				Terminal: <input type="text" name="terminal" required>
+				Horario de Partida: <input type="datetime-local" name="horarioPartida" required>
+				Pista: <input type="text" name="pista" required><br>
+				Aeroporto: <select name= "airport_id">
+					<?php
 					foreach($airports as $airport){
 						echo '<option value='.$airport->id.'>'.$airport->nome.'</option>';
 					}
-				?>
-			</select>
-			<br>
-			<p>Chegada</p>
-			Terminal: <input type="text" name="terminalC" required>
-			Horario de Chegada: <input type="time" name="horarioChegada" required>
-			Pista: <input type="text" name="pistaC" required>
-			Aeroporto: <select name= "airport_idC">
-				<?php
+					?>
+				</select>
+				<br>
+				<h2 style='color: teal; font-weight: bold; font-size: large'>Chegada</h2>
+				Terminal: <input type="text" name="terminalC" required>
+				Horario de Chegada: <input type="datetime-local" name="horarioChegada" required>
+				Pista: <input type="text" name="pistaC" required><br>
+				Aeroporto: <select name= "airport_idC">
+					<?php
 					foreach($airports as $airport){
 						echo '<option value='.$airport->id.'>'.$airport->nome.'</option>';
 					}
-				?>
-			</select>
-			<br>
-			<br>
-			<input text="Adicionar" type="submit">
-		</form>
+					?>
+				</select>
+				<br>
+				<br>
+				<input text="Adicionar" type="submit">
+			</form>
+		</div>	
 	</div>
-</header>
+</body>
 
 
 <?php Layout::includeLayout('footer') ?>

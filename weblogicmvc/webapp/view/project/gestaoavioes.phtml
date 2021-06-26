@@ -12,74 +12,63 @@ $airplanes = Data::get('airplanes');
 table, th, td {
   border-collapse: collapse;
   color: black;
-    text-align: center;
-    border-bottom: 1px solid teal;
-    border-top: none;
-    border-left: none;
-    border-right: none;
+  text-align: center;
+  border-bottom: 1px solid teal;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  background-color:  rgba(224, 224, 224, 0.4) ;
+}
+form{
+  color: teal;
+  font-weight: bold;
+  justify-content: space-around;
+  border: teal;
 
 }
 </style>
 
-<header id="head">
+<body id="head">
 	<div class="container ">
-		<h2 style="font-weight: bold; font-size: xx-large">Aviões</h2> <table class="container" style="border: #00b0e8; height: 30px;">
-            <br>
-            <br>
+		<h2 style='color: teal; font-weight: bold; font-size: xx-large'>Aviões</h2>  
+    <table class="container" style="border: #00b0e8; height: 30px; width: 100%;">
+      <?php
+      echo "<tr>";
+      echo "<th style='color: teal; font-weight: bold; font-size: large;'>Marca</th>";
+      echo "<th style='color:teal; font-weight: bold; font-size: large;'>Modelo</th>";
+      echo "<th style='color:teal; font-weight: bold; font-size: large;'>Capacidade</th>";
+      echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: large;'>Eliminar <br> Entrada</th>";
+      echo "</tr>";
 
-		<?php
-        echo "<tr>";
-        echo "<th style='color: teal; font-weight: bold; font-size: large;'>Marca</th>";
-        echo "<th style='color:teal; font-weight: bold; font-size: large;'>Modelo</th>";
-        echo "<th style='color:teal; font-weight: bold; font-size: large;'>Capacidade</th>";
-        echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: large;'>Eliminar <br> Entrada</th>";
+      foreach ($airplanes as $airplane) {
+
+        echo "<tr style='height: 30px'>";
+        echo '<td style="width: 200px">'.$airplane->marca .'</td>';
+        echo '<td style="width: 200px">'.$airplane->modelo .'</td>';
+        echo '<td style="width: 90px">'.$airplane->capacidade.'</td>';
+        echo '<td style="color: teal; width: 10px"><a class="btn" href="'.Url::ToRoute("airplane/destroy", $airplane->id).'">X</a></td>';
         echo "</tr>";
-
-			foreach ($airplanes as $airplane) {
-
-                echo "<tr style='height: 30px'>";
-				echo '<td style="width: 200px">'.$airplane->marca .'</td>';
-				echo '<td style="width: 200px">'.$airplane->modelo .'</td>';
-				echo '<td style="width: 90px">'.$airplane->capacidade.'</td>';
-				echo '<td style="color: teal; width: 10px"><a class="btn" href="'.Url::ToRoute("airplane/destroy", $airplane->id).'">X</a></td>';
-				echo "</tr>";
-			}
-		?>
-		</table>
+      }
+      ?>
+    </table>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="container" style="background-color:  rgba(224, 224, 224, 0.4) ; width: 75%; padding: 20px; border-bottom: 5px;">
+      <form method="POST" action="<?php Url::toRoute('airplane/store')?>">
+        Marca: <th><input style="border-left: 10px" type="text" name="marca" required></th>
+        Modelo: <th><input style="border-left: 10px" type="text" name="modelo" required></th>
+        Capacidade: <th><input style="border-left: 10px;" type="number" name="capacidade" required></th>
         <br>
         <br>
-		<br>
-        <br>
-        <br>
-        <br>
-
-        <style>
-            form{
-                color: teal;
-                font-weight: bold;
-                justify-content: space-around;
-                border: teal;
-
-            }
-
-        </style>
-        <tr>
-        <form method="POST" action="<?php Url::toRoute('airplane/store')?>">
-            Marca: <th><input style="border-left: 10px" type="text" name="marca" required></th>
-			Modelo: <th><input style="border-left: 10px" type="text" name="modelo" required></th>
-			Capacidade: <th><input style="border-left: 10px;" type="text" name="capacidade" required></th>
-			<br>
-			<br>
-            <br>
-
-			<input text="Adicionar" type="submit">
-		</form>
-        </tr>
-        <br>
-        <br>
-        <br>
-
-    </div>
-</header>
+        <input text="Adicionar" type="submit">
+      </form>
+    </div>     
+  </div> 
+  <br>
+  <br>
+  <br>
+</body>
 
 <?php Layout::includeLayout('footer') ?>

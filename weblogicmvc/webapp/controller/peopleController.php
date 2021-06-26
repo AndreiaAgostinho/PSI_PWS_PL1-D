@@ -46,11 +46,11 @@ class peopleController extends BaseController implements ResourceControllerInter
 		$people = new people(Post::getAll());
 
 		if($people->is_valid()){
-		    $people->save();
-		    Redirect::toRoute('home/login');
+			$people->save();
+			Redirect::toRoute('home/login');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('people/create', ['people' => $people]);
+			Redirect::flashToRoute('people/create', ['people' => $people]);
 		}
 	}
 
@@ -65,7 +65,7 @@ class peopleController extends BaseController implements ResourceControllerInter
 		if (is_null($people)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('pessoa.perfil', ['people' => $people]);
+			return View::make('pessoa.perfil', ['people' => $people]);
 		}
 	}
 
@@ -80,7 +80,7 @@ class peopleController extends BaseController implements ResourceControllerInter
 		if (is_null($people)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('people.edit', ['people' => $people]);
+			return View::make('people.edit', ['people' => $people]);
 		}
 	}
 
@@ -96,11 +96,11 @@ class peopleController extends BaseController implements ResourceControllerInter
 		$people->update_attributes(Post::getAll());
 
 		if($people->is_valid()){
-		    $people->save();
-		    Redirect::toRoute('pessoa/perfil');
+			$people->save();
+			Redirect::toRoute('pessoa/perfil');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('people/edit', ['people' => $people]);
+			Redirect::flashToRoute('people/edit', ['people' => $people]);
 		}
 	}
 
@@ -128,82 +128,88 @@ class peopleController extends BaseController implements ResourceControllerInter
 		$pessoas = people::find_all_by_username([$username], array('select' => 'palavrapasse'));
 
 		foreach ($pessoas as $pessoa) {
-                if ($password == $pessoa->palavrapasse) {
-                	$pessoas = people::find_all_by_username_and_palavrapasse([$username], [$password]);
-                	foreach ($pessoas as $pessoa)
-                	{
-                		$_SESSION["Tipo"] = $pessoa->tipo;
-                		$_SESSION["Nome"] = $pessoa->nome;
-                		$_SESSION["Id"] = $pessoa->id;
-                	}
+			if ($password == $pessoa->palavrapasse) {
+				$pessoas = people::find_all_by_username_and_palavrapasse([$username], [$password]);
+				foreach ($pessoas as $pessoa)
+				{
+					$_SESSION["Tipo"] = $pessoa->tipo;
+					$_SESSION["Nome"] = $pessoa->nome;
+					$_SESSION["Id"] = $pessoa->id;
+				}
 
-                    Redirect::toRoute('home/index');
-                }
-            }
+				Redirect::toRoute('home/index');
+			}
+		}
 
-            
-            View::Make('home/login');
-        }
+		
+		View::Make('home/login');
+	}
 
-    public function perfil(){
+	public function perfil(){
 
-    	$people = people::find([$_SESSION["Id"]]);
-    	$tickets = ticket::find_all_by_people_id([$_SESSION["Id"]]);
+		$people = people::find([$_SESSION["Id"]]);
+		$tickets = ticket::find_all_by_people_id([$_SESSION["Id"]]);
 
-    	$i = 0;
-    	$allflights = array();
-    	foreach($tickets as $ticket){
-    		$ticketsflights = ticketsflight::find_all_by_ticket_id([$ticket->id]);
+		$f = 0;
+		$z = 0;
+		$allflights = array();
+		$flightsbyticket = array();
+		foreach($tickets as $ticket){
+			$ticketsflights = ticketsflight::find_all_by_ticket_id([$ticket->id]);
 
-    		foreach($ticketsflights as $ticketsflight){
-    			$allflights[$i] = $ticketsflight;
-    			$i++;
-    		}
-    	}
+			for($i = 0; $i < sizeof($ticketsflights); $i++){
+				$flightsbyticket[$f] = $ticketsflights[$i];
+				$f++;
+			}
+			$allflights[$z] = $flightsbyticket;
+			$z++;
+			$flightsbyticket = null;
+			$f = 0;
+		}
 
-    	View::Make('project.perfil', ['people' => $people, 'allflights' => $allflights]);
-    }  
+		View::Make('project.perfil', ['people' => $people, 'allflights' => $allflights]);
+	}
+	
+	
 
-        public function sair(){
-        session_destroy();
-    	$_SESSION["Tipo"] = null;
-    	$_SESSION["Nome"] = null;
-    	$_SESSION["Id"] = null;
-    	Redirect::toRoute('home/index');
-    }
+	public function sair(){
+		session_destroy();
+		$_SESSION["Tipo"] = null;
+		$_SESSION["Nome"] = null;
+		$_SESSION["Id"] = null;
+		Redirect::toRoute('home/index');
+	}
 
-    public function gestao(){
+	public function gestao(){
 
-    	$peoples = people::find('all', array('conditions' => array('tipo in (?)', array('G','O'))));
+		$peoples = people::find('all', array('conditions' => array('tipo in (?)', array('G','O'))));
 
-    	return View::Make('project.gestaopessoal', ['peoples' => $peoples]);
+		return View::Make('project.gestaopessoal', ['peoples' => $peoples]);
 
-    }
+	}
 
-    public function addpersonel(){
-    	$people = new people(Post::getAll());
+	public function addpersonel(){
+		$people = new people(Post::getAll());
 
 		if($people->is_valid()){
-		    $people->save();
-		    Redirect::toRoute('pessoa/gestaopessoal');
+			$people->save();
+			Redirect::toRoute('pessoa/gestaopessoal');
 		} else {
-		    //redirect to form with data and errors
-		    Redirect::flashToRoute('people/create', ['people' => $people]);
+			Redirect::toRoute('pessoa/gestaopessoal');
 		}
-    }
+	}
 
-    public function atualizar(){
-    	$people = people::find([$_SESSION["Id"]]);
+	public function atualizar(){
+		$people = people::find([$_SESSION["Id"]]);
 		$people->update_attributes(Post::getAll());
 
 		if($people->is_valid()){
-		    $people->save();
-		    Redirect::toRoute('pessoa/perfil');
+			$people->save();
+			Redirect::toRoute('pessoa/perfil');
 		} else {
-		    //redirect to form with data and errors
-		    Redirect::flashToRoute('people/edit', ['people' => $people]);
+			Redirect::toRoute('pessoa/perfil');
 		}
-    }
+	}
 }
 
 ?>

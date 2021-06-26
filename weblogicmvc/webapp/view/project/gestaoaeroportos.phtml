@@ -10,15 +10,34 @@ $airports = Data::get('airports');
 ?>
 <style>
 table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-  color: black;
+	border-collapse: collapse;
+	color: black;
+	text-align: center;
+	border-bottom: 1px solid teal;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	background-color:  rgba(224, 224, 224, 0.4) ;
+}
+form{
+	color: teal;
+	font-weight: bold;
+	justify-content: space-around;
+	border: teal;
+
 }
 </style>
-<header id="head">
+<body id="head">
 	<div class="container ">
-		<h3>Aeroportos</h3> <table class="container">
-		<?php 
+		<h2 style='color: teal; font-weight: bold; font-size: xx-large'>Aeroportos</h2> <table class="container" style="border: #00b0e8; height: 30px; width: 100%;">
+
+			<?php 
+			echo "<tr>";
+			echo "<th style='color: teal; font-weight: bold; font-size: large;'>Pais</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Cidade</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Nome</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: large;'>Eliminar <br> Entrada</th>";
+			echo "</tr>";
 
 			foreach ($airports as $airport) {
 				echo "<tr>";
@@ -28,17 +47,25 @@ table, th, td {
 				echo '<td><a class="btn" href="'.Url::ToRoute("airport/destroy", $airport->id).'">X</a></td>';
 				echo "</tr>";
 			}
-		?>
+			?>
 		</table>
 		<br>
-		<form method="POST" action="<?php Url::toRoute('airport/store')?>">
-			Pais: <input type="text" name="pais" required>
-			Cidade: <input type="text" name="cidade" required>
-			Nome: <input type="text" name="nome" required>
-			<br>
-			<br>
-			<input text="Adicionar" type="submit">
-		</form>
+		<br>
+		<br>
+		<br>
+		<div class="container" style="background-color:  rgba(224, 224, 224, 0.4) ; width: 75%; padding: 20px; border-bottom: 5px;">
+			<form method="POST" action="<?php Url::toRoute('airport/store')?>">
+				Pais: <input type="text" name="pais" required>
+				Cidade: <input type="text" name="cidade" required>
+				Nome: <input type="text" name="nome" required>
+				<br>
+				<br>
+				<input text="Adicionar" type="submit">
+			</form>
+		</div>
 	</div>
-</header>
+	<br>    	 
+	<br>
+	<br>
+</body>
 <?php Layout::includeLayout('footer') ?>

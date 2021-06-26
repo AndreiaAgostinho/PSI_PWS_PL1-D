@@ -46,7 +46,7 @@ class flightController extends BaseController implements ResourceControllerInter
 	{
 		//create new resource (activerecord/model) instance with data from POST
 		//your form name fields must match the ones of the table fields
-				$partida= array(
+		$partida= array(
 			'terminal' => Post::get("terminal"),
 			'horarioPartida' => Post::get("horarioPartida"),
 			'pista' => Post::get("pista"),
@@ -55,8 +55,11 @@ class flightController extends BaseController implements ResourceControllerInter
 
 		$departure = new departure($partida);
 
-		$departure->save();
-
+		if($departure->is_valid()){
+			$departure->save();
+		} else {
+			Redirect::toRoute('flight/gestao');
+		}
 		$lastdeparture = departure::last();
 
 		$chegada= array(
@@ -68,7 +71,11 @@ class flightController extends BaseController implements ResourceControllerInter
 
 		$arrival = new arrival($chegada);
 
-		$arrival->save();
+		if($arrival->is_valid()){
+			$arrival->save();
+		} else {
+			Redirect::toRoute('flight/gestao');
+		}
 
 		$lastarrival = arrival::last();
 
@@ -79,16 +86,16 @@ class flightController extends BaseController implements ResourceControllerInter
 			'departure_id' => $lastdeparture->id,
 			'arrival_id' => $lastarrival->id,
 			'airplane_id' => Post::get("airplane_id")
-			);
+		);
 
 		$flight= new flight($voo);
 
 		if($flight->is_valid()){
-		    $flight->save();
-		    Redirect::toRoute('flight/gestao');
+			$flight->save();
+			Redirect::toRoute('flight/gestao');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('flight/create', ['flight' => $flight]);
+			Redirect::toRoute('flight/gestao');
 		}
 	}
 
@@ -103,7 +110,7 @@ class flightController extends BaseController implements ResourceControllerInter
 		if (is_null($flight)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('flight.show', ['flight' => $flight]);
+			return View::make('flight.show', ['flight' => $flight]);
 		}
 	}
 
@@ -118,7 +125,7 @@ class flightController extends BaseController implements ResourceControllerInter
 		if (is_null($flight)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('flight.edit', ['flight' => $flight]);
+			return View::make('flight.edit', ['flight' => $flight]);
 		}
 	}
 
@@ -134,11 +141,11 @@ class flightController extends BaseController implements ResourceControllerInter
 		$flight->update_attributes(Post::getAll());
 
 		if($flight->is_valid()){
-		    $flight->save();
-		    Redirect::toRoute('flight/index');
+			$flight->save();
+			Redirect::toRoute('flight/index');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('flight/edit', ['flight' => $flight]);
+			Redirect::flashToRoute('flight/edit', ['flight' => $flight]);
 		}
 	}
 
@@ -171,7 +178,7 @@ class flightController extends BaseController implements ResourceControllerInter
 		$flights = flight::all();
 		$airplanes = airplane::all();
 		$airports = airport::all();
-	return View::make('project.gestaovoos', ['flights' => $flights, 'airplanes' => $airplanes,'airports' => $airports]);
+		return View::make('project.gestaovoos', ['flights' => $flights, 'airplanes' => $airplanes,'airports' => $airports]);
 
 	}
 
@@ -180,83 +187,132 @@ class flightController extends BaseController implements ResourceControllerInter
 		$post_departure = Post::get("partida");
 		$post_arrival = Post::get("chegada");
 
-		$search_airport_departure = airport::find_all_by_cidade([$post_departure]);
-		$search_airport_arrival = airport::find_all_by_cidade([$post_arrival]);
-
-
-		foreach($search_airport_departure as $airport){
-			$departures = departure::find_all_by_airport_id([$airport->id]);
-		}
-		foreach($search_airport_arrival as $airport){
-			$arrivals = arrival::find_all_by_airport_id([$airport->id]);
+		if(Post::get("data") != null){
+			$post_data = new Carbon(Post::get("data"));
 		}
 
-		$i = 0;
-		$searched_flight = array();
-		foreach ($departures as $departure) {
-			foreach($arrivals as $arrival){
+		if(Post::get("datavolta") != null){
+			$_SESSION['datavolta'] = Post::get("datavolta");
+		}
+		else{
+			$_SESSION['datavolta'] = null;
+		}
 
-				$flights = flight::find_all_by_departure_id_and_arrival_id([$departure->id], [$arrival->id]);
+		$search_airport_one = airport::find_all_by_cidade([$post_departure]);
+		$search_airport_two = airport::find_all_by_cidade([$post_arrival]);
 
-				foreach($flights as $flight){
-					$searched_flight[$i] = $flight;
-					$i++;
+
+		if(($search_airport_one == null) || ($search_airport_two == null)){
+			Redirect::toRoute("home/voos");
+		}else{
+
+			foreach($search_airport_one as $airport){
+				$departures = departure::find_all_by_airport_id([$airport->id]);
+			}
+			foreach($search_airport_two as $airport){
+				$arrivals = arrival::find_all_by_airport_id([$airport->id]);
+			}
+
+			$i = 0;
+			$searched_flight = array();
+			foreach ($departures as $departure) {
+				foreach($arrivals as $arrival){
+
+					$flights = flight::find_all_by_departure_id_and_arrival_id([$departure->id], [$arrival->id]);
+
+					foreach($flights as $flight){
+						$datapartida = new Carbon($flight->departure->horariopartida);
+						if(Post::get("data") != null){
+							if($datapartida->isSameDay($post_data)){
+								$searched_flight[$i] = $flight;
+								$i++;
+							}
+						}else{
+							$searched_flight[$i] = $flight;
+							$i++;
+						}
+					}
 				}
 			}
-		}
 
-		$i = 0;
-		$searched_flight_onestop = array();
-		foreach ($departures as $departure) {
-			$flight_departures = flight::find_all_by_departure_id([$departure->id]);
-			foreach($arrivals as $arrival){
-			
-				$flight_arrivals = flight::find_all_by_arrival_id([$arrival->id]);
+			$i = 0;
+			$searched_flight_onestop = array();
+			foreach ($departures as $departure) {
+				$flight_departures = flight::find_all_by_departure_id([$departure->id]);
+				foreach($arrivals as $arrival){
+					
+					$flight_arrivals = flight::find_all_by_arrival_id([$arrival->id]);
 
-				foreach($flight_departures as $flight_departure){
-					foreach($flight_arrivals as $flight_arrival){
-						
-						$date_arrival = new Carbon($flight_departure->arrival->horariochegada);
-						$date_departure = new Carbon($flight_arrival->departure->horariopartida);
+					foreach($flight_departures as $flight_departure){
+						foreach($flight_arrivals as $flight_arrival){
+							
+							$datapartida = new Carbon($flight_departure->departure->horariopartida);
 
-						if(($flight_departure->arrival->airport->cidade == $flight_arrival->departure->airport->cidade) && ($date_departure->diffInHours($date_arrival, false) <= 4)){
-							$searched_flight_onestop[$i] = $flight_departure;
+							$date_arrival = new Carbon($flight_departure->arrival->horariochegada);
+							$date_departure = new Carbon($flight_arrival->departure->horariopartida);
+
+							if(Post::get("data") != null){
+								if($datapartida->isSameDay($post_data)){
+									if(($flight_departure->arrival->airport->cidade == $flight_arrival->departure->airport->cidade) && 
+										($date_departure->diffInHours($date_arrival, false) <= 4) && 
+										($date_departure->isSameDay($date_arrival))){
+
+										$searched_flight_onestop[$i] = $flight_departure;
+									$i++;
+									$searched_flight_onestop[$i] = $flight_arrival;
+									$i++;
+								}
+							}
+						}else{
+							if(($flight_departure->arrival->airport->cidade == $flight_arrival->departure->airport->cidade) && 
+								($date_departure->diffInHours($date_arrival, false) <= 4) && 
+								($date_departure->isSameDay($date_arrival))){
+
+								$searched_flight_onestop[$i] = $flight_departure;
 							$i++;
 							$searched_flight_onestop[$i] = $flight_arrival;
 							$i++;
-
 						}
 					}
 				}
 			}
 		}
+	}
 
-		$searched_flight_twostop = array();
+	$searched_flight_twostop = array();
 
-		$i = 0;
-		$allflights = flight::all();
-		foreach ($departures as $departure) {
-			$flight_departures = flight::find_all_by_departure_id([$departure->id]);
-			foreach($arrivals as $arrival){
+	$i = 0;
+	$allflights = flight::all();
+	foreach ($departures as $departure) {
+		$flight_departures = flight::find_all_by_departure_id([$departure->id]);
+		foreach($arrivals as $arrival){
 			
-				$flight_arrivals = flight::find_all_by_arrival_id([$arrival->id]);
+			$flight_arrivals = flight::find_all_by_arrival_id([$arrival->id]);
 
-				foreach($flight_departures as $flight_departure){
-					foreach($flight_arrivals as $flight_arrival){
+			foreach($flight_departures as $flight_departure){
+				foreach($flight_arrivals as $flight_arrival){
+					
+					$datapartida = new Carbon($flight_departure->departure->horariopartida);
+
+					$date_arrival = new Carbon($flight_departure->arrival->horariochegada);
+					$date_departure = new Carbon($flight_arrival->departure->horariopartida);
+
+					foreach($allflights as $allflight){
+
+						$allflight_arrival = new Carbon($allflight->arrival->horariochegada);
+						$allflight_departure = new Carbon($allflight->departure->horariopartida);
 						
-						$date_arrival = new Carbon($flight_departure->arrival->horariochegada);
-						$date_departure = new Carbon($flight_arrival->departure->horariopartida);
-
-						foreach($allflights as $allflight){
-
-							$allflight_arrival = new Carbon($allflight->arrival->horariochegada);
-							$allflight_departure = new Carbon($allflight->departure->horariopartida);
-							
-
-							if(($flight_departure->arrival->airport->cidade == $allflight->departure->airport->cidade) && ($flight_arrival->departure->airport->cidade == $allflight->arrival->airport->cidade) && ($date_arrival->diffInHours($allflight_departure, false) <= 4) && ($date_departure->diffInHours($allflight_arrival, false) <= 4)){
+						if(Post::get("data") != null){
+							if($datapartida->isSameDay($post_data)){
+								if(($flight_departure->arrival->airport->cidade == $allflight->departure->airport->cidade) && 
+									($flight_arrival->departure->airport->cidade == $allflight->arrival->airport->cidade) && 
+									($date_arrival->diffInHours($allflight_departure, false) <= 4) && 
+									($date_departure->diffInHours($allflight_arrival, false) <= 4) &&
+									($date_arrival->isSameDay($allflight_departure)) &&
+									($date_departure->isSameDay($allflight_arrival))){
 
 
-								$searched_flight_twostop[$i] = $flight_departure;
+									$searched_flight_twostop[$i] = $flight_departure;
 								$i++;
 
 								$searched_flight_twostop[$i] = $allflight;
@@ -264,20 +320,211 @@ class flightController extends BaseController implements ResourceControllerInter
 
 								$searched_flight_twostop[$i] = $flight_arrival;
 								$i++;
-
 							}
 						}
+					}else{
+						if(($flight_departure->arrival->airport->cidade == $allflight->departure->airport->cidade) && 
+							($flight_arrival->departure->airport->cidade == $allflight->arrival->airport->cidade) && 
+							($date_arrival->diffInHours($allflight_departure, false) <= 4) && 
+							($date_departure->diffInHours($allflight_arrival, false) <= 4) &&
+							($date_arrival->isSameDay($allflight_departure)) &&
+							($date_departure->isSameDay($allflight_arrival))){
+
+							$searched_flight_twostop[$i] = $flight_departure;
+						$i++;
+
+						$searched_flight_twostop[$i] = $allflight;
+						$i++;
+
+						$searched_flight_twostop[$i] = $flight_arrival;
+						$i++;
 					}
 				}
 			}
 		}
-
-
-
-		return View::make('project.voos', ['searched_flight' => $searched_flight, 'searched_flight_onestop' => $searched_flight_onestop, 'searched_flight_twostop' => $searched_flight_twostop]);
-
-
 	}
+}
+
+return View::make('project.voos', 
+	['searched_flight' => $searched_flight, 'searched_flight_onestop' => $searched_flight_onestop, 'searched_flight_twostop' => $searched_flight_twostop, 'idaevolta' => Post::get('idaevolta')]);
+}
+}
+}
+
+public function volta ($idaflights){
+
+	
+	$id = explode(",", $idaflights);
+	
+	for($i = 0; $i < sizeof($id); $i++){
+
+		$flight = flight::find([$id[$i]]);
+		
+		if($i == 0){
+			$ida_departure = $flight->departure->airport->cidade;
+			
+		}
+
+		if($i+1 == sizeof($id)){
+			$ida_arrival = $flight->arrival->airport->cidade;
+		}
+	}
+
+	if($_SESSION['datavolta'] != null){
+		$post_data_volta = new Carbon($_SESSION['datavolta']);
+	}
+
+	$search_airport_one = airport::find_all_by_cidade([$ida_departure]);
+	$search_airport_two = airport::find_all_by_cidade([$ida_arrival]);
+
+	$searched_flight_volta = array();
+	$searched_flight_onestop_volta = array();
+	$searched_flight_twostop_volta = array();
+
+	foreach($search_airport_one as $airport){
+		$arrivals = arrival::find_all_by_airport_id([$airport->id]);
+	}
+	foreach($search_airport_two as $airport){
+		$departures = departure::find_all_by_airport_id([$airport->id]);
+	}
+
+	$i = 0;
+	
+	foreach ($departures as $departure) {
+		foreach($arrivals as $arrival){
+
+			$flights = flight::find_all_by_departure_id_and_arrival_id([$departure->id], [$arrival->id]);
+
+			foreach($flights as $flight){
+				$datapartida = new Carbon($flight->departure->horariopartida);
+				if($_SESSION['datavolta'] != null){
+					if($datapartida->isSameDay($post_data_volta)){
+						$searched_flight_volta[$i] = $flight;
+						$i++;
+					}
+				}else{
+					$searched_flight_volta[$i] = $flight;
+					$i++;
+				}
+			}
+		}
+	}
+
+	$i = 0;
+	foreach ($departures as $departure) {
+		$flight_departures = flight::find_all_by_departure_id([$departure->id]);
+		foreach($arrivals as $arrival){
+			
+			$flight_arrivals = flight::find_all_by_arrival_id([$arrival->id]);
+
+			foreach($flight_departures as $flight_departure){
+				foreach($flight_arrivals as $flight_arrival){
+					
+					$datapartida = new Carbon($flight_departure->departure->horariopartida);
+
+					$date_arrival = new Carbon($flight_departure->arrival->horariochegada);
+					$date_departure = new Carbon($flight_arrival->departure->horariopartida);
+
+					if($_SESSION['datavolta'] != null){
+						if($datapartida->isSameDay($post_data_volta)){
+							if(($flight_departure->arrival->airport->cidade == $flight_arrival->departure->airport->cidade) && 
+								($date_departure->diffInHours($date_arrival, false) <= 4) && 
+								($date_departure->isSameDay($date_arrival))){
+
+								$searched_flight_onestop_volta[$i] = $flight_departure;
+							$i++;
+							$searched_flight_onestop_volta[$i] = $flight_arrival;
+							$i++;
+						}
+					}
+				}else{
+					if(($flight_departure->arrival->airport->cidade == $flight_arrival->departure->airport->cidade) && 
+						($date_departure->diffInHours($date_arrival, false) <= 4) && 
+						($date_departure->isSameDay($date_arrival))){
+
+						$searched_flight_onestop_volta[$i] = $flight_departure;
+					$i++;
+					$searched_flight_onestop_volta[$i] = $flight_arrival;
+					$i++;
+				}
+			}
+		}
+	}
+}
+}
+
+
+
+$i = 0;
+$allflights = flight::all();
+foreach ($departures as $departure) {
+	$flight_departures = flight::find_all_by_departure_id([$departure->id]);
+	foreach($arrivals as $arrival){
+		
+		$flight_arrivals = flight::find_all_by_arrival_id([$arrival->id]);
+
+		foreach($flight_departures as $flight_departure){
+			foreach($flight_arrivals as $flight_arrival){
+				
+				$datapartida = new Carbon($flight_departure->departure->horariopartida);
+
+				$date_arrival = new Carbon($flight_departure->arrival->horariochegada);
+				$date_departure = new Carbon($flight_arrival->departure->horariopartida);
+
+				foreach($allflights as $allflight){
+
+					$allflight_arrival = new Carbon($allflight->arrival->horariochegada);
+					$allflight_departure = new Carbon($allflight->departure->horariopartida);
+					
+					if($_SESSION['datavolta'] != null){
+						if($datapartida->isSameDay($post_data_volta)){
+							if(($flight_departure->arrival->airport->cidade == $allflight->departure->airport->cidade) && 
+								($flight_arrival->departure->airport->cidade == $allflight->arrival->airport->cidade) && 
+								($date_arrival->diffInHours($allflight_departure, false) <= 4) && 
+								($date_departure->diffInHours($allflight_arrival, false) <= 4) &&
+								($date_arrival->isSameDay($allflight_departure)) &&
+								($date_departure->isSameDay($allflight_arrival))){
+
+
+								$searched_flight_twostop_volta[$i] = $flight_departure;
+							$i++;
+
+							$searched_flight_twostop_volta[$i] = $allflight;
+							$i++;
+
+							$searched_flight_twostop_volta[$i] = $flight_arrival;
+							$i++;
+						}
+					}
+				}else{
+					if(($flight_departure->arrival->airport->cidade == $allflight->departure->airport->cidade) && 
+						($flight_arrival->departure->airport->cidade == $allflight->arrival->airport->cidade) && 
+						($date_arrival->diffInHours($allflight_departure, false) <= 4) && 
+						($date_departure->diffInHours($allflight_arrival, false) <= 4) &&
+						($date_arrival->isSameDay($allflight_departure)) &&
+						($date_departure->isSameDay($allflight_arrival))){
+
+
+						$searched_flight_twostop_volta[$i] = $flight_departure;
+					$i++;
+
+					$searched_flight_twostop_volta[$i] = $allflight;
+					$i++;
+
+					$searched_flight_twostop_volta[$i] = $flight_arrival;										
+					$i++;
+				}
+			}
+		}
+	}
+}
+}
+}
+
+return View::make('project.voosvolta', 
+	['searched_flight_volta' => $searched_flight_volta, 'searched_flight_onestop_volta' => $searched_flight_onestop_volta, 'searched_flight_twostop_volta' => $searched_flight_twostop_volta, 'ida' => $idaflights]);
+
+}
 }
 
 ?>

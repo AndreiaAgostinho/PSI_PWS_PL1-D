@@ -9,14 +9,14 @@ $referencia = Data::get('referencia');
 $valor = Data::get('valor');
 
 Layout::includeLayout('indexheader'); ?>
-<header id="head">
-	<div class="container">
-		<h3>Pagamento</h3>
-		<p>Entidade - <?php echo $entidade?></p>	
-		<p>Referencia - <?php echo $referencia?></p>	
-		<p>Valor - <?php echo $valor?></p>
+<body id="head">
+	<div class="container" style="background-color:  rgba(224, 224, 224, 0.4) ; width: 50%; padding: 20px; border-bottom: 5px;">
+		<h3 style="color: teal; font-weight: bold; justify-content: space-around;border: teal;">Pagamento</h3>
+		<p style="color: teal; font-weight: bold; justify-content: space-around;border: teal;">Entidade - <?php echo $entidade?></p>	
+		<p style="color: teal; font-weight: bold; justify-content: space-around;border: teal;">Referencia - <?php echo $referencia?></p>	
+		<p style="color: teal; font-weight: bold; justify-content: space-around;border: teal;">Valor - <?php echo $valor?></p>
 		<br>
 		<a class="btn" href="<?php echo Url::ToRoute("home/index")?>">Voltar</a>
 	</div>
-</header>
+</body>
 <?php Layout::includeLayout('footer') ?>

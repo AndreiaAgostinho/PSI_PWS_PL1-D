@@ -48,11 +48,11 @@ class ticketController extends BaseController implements ResourceControllerInter
 		$ticket = new ticket(Post::getAll());
 
 		if($ticket->is_valid()){
-		    $ticket->save();
-		    Redirect::toRoute('ticket/index');
+			$ticket->save();
+			Redirect::toRoute('ticket/index');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('ticket/create', ['ticket' => $ticket]);
+			Redirect::flashToRoute('ticket/create', ['ticket' => $ticket]);
 		}
 	}
 
@@ -67,7 +67,7 @@ class ticketController extends BaseController implements ResourceControllerInter
 		if (is_null($ticket)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('ticket.show', ['ticket' => $ticket]);
+			return View::make('ticket.show', ['ticket' => $ticket]);
 		}
 	}
 
@@ -82,7 +82,7 @@ class ticketController extends BaseController implements ResourceControllerInter
 		if (is_null($ticket)) {
 		   //TODO redirect to standard error page
 		} else {
-		    return View::make('ticket.edit', ['ticket' => $ticket]);
+			return View::make('ticket.edit', ['ticket' => $ticket]);
 		}
 	}
 
@@ -98,11 +98,11 @@ class ticketController extends BaseController implements ResourceControllerInter
 		$ticket->update_attributes(Post::getAll());
 
 		if($ticket->is_valid()){
-		    $ticket->save();
-		    Redirect::toRoute('ticket/index');
+			$ticket->save();
+			Redirect::toRoute('ticket/index');
 		} else {
 		    //redirect to form with data and errors
-		    Redirect::flashToRoute('ticket/edit', ['ticket' => $ticket]);
+			Redirect::flashToRoute('ticket/edit', ['ticket' => $ticket]);
 		}
 	}
 
@@ -119,25 +119,60 @@ class ticketController extends BaseController implements ResourceControllerInter
 
 	public function comprar($id_one){
 
+		$var = true;
 		$id = explode(",", $id_one);
 		for($i = 0; $i < sizeof($id); $i++){
 
 			$flight = flight::find([$id[$i]]);
 			$departure = new Carbon($flight->departure->horariopartida);
-		
+			
 			$horaembarque = $departure->subHours(1);
 
-			$Letter = array('A','B','C','D','E','F');
-		
-			$lugar = rand(1,70) . $Letter[rand(0,5)];
 
-			$portaembarque = rand(1, 20);
+			$Letter = array('A','B','C','D','E','F');
+
+			while($var == true){
+				$lugar = rand(1,70) . $Letter[rand(0,5)];
+
+				$ticketsflight = ticketsflight::find_all_by_flight_id([$id[$i]]);
+
+				foreach($ticketsflight as $flights){
+					if(($flights == null) || ($flights->lugar != $lugar)){
+						$var = false;
+						break;
+					}
+				}
+				$var = false;
+			}
+
+			$var = true;
+
+			while($var == true){
+				
+				$portaembarque = rand(1, 20);
+				
+				$ticketsflight = ticketsflight::find_all_by_flight_id([$id[$i]]);
+
+				foreach($ticketsflight as $flights){
+					if(($flights == null)){
+						$var = false;
+						break;
+
+					}else{
+						$portaembarque = $flights->portaembarque;
+						$var = false;
+						break;
+
+					}
+				}
+				$var = false;
+			}
 
 			$oneflight = array(
-			'flight' => $flight, 
-			'horaembarque' => $horaembarque,
-			'lugar' => $lugar, 
-			'portaembarque' => $portaembarque
+				'flight' => $flight, 
+				'horaembarque' => $horaembarque,
+				'lugar' => $lugar, 
+				'portaembarque' => $portaembarque
 			);
 
 			$allflights[$i] = $oneflight;
@@ -148,47 +183,88 @@ class ticketController extends BaseController implements ResourceControllerInter
 
 	public function confirmcomprar(){
 
-
+		if($_SESSION['Volta'] == true){
+			$volta = "V";
+			$_SESSION['Volta'] = false;
+		}
+		else{
+			$volta = "I";
+		}
 		$allflights = $_SESSION["allflights"];
 		
 		$_SESSION["allflights"] = null;
 
 		$bilhete = array(
-		'horacompra' => Carbon::now(),
-		'idaevolta' => 'I',
-		'checkin' => 'N',
-		'valor' => Post::get('valor'),
-		'people_id' => $_SESSION['Id']
+			'horacompra' => Carbon::now(),
+			'idaevolta' => $volta,
+			'valor' => Post::get('valor'),
+			'people_id' => $_SESSION['Id']
 		);
 
 		$ticket = new ticket($bilhete);
 
 		if($ticket->is_valid()){
-		    $ticket->save();
+			$ticket->save();
 			
-		    $ticket = ticket::last();
+			$ticket = ticket::last();
 
-		    foreach ($allflights as $allflight) {
-		    	
-		    	$bilhete_voo = array(
-		    	'horarioembarque' => $allflight["horaembarque"],
-		    	'lugar' =>  $allflight["lugar"],
-		    	'portaembarque' => $allflight["portaembarque"],
-		    	'flight_id' => $allflight["flight"]->id,
-		    	'ticket_id' => $ticket->id
-		    	);
+			foreach ($allflights as $allflight) {
+				
+				$bilhete_voo = array(
+					'horarioembarque' => $allflight["horaembarque"],
+					'lugar' =>  $allflight["lugar"],
+					'portaembarque' => $allflight["portaembarque"],
+					'flight_id' => $allflight["flight"]->id,
+					'ticket_id' => $ticket->id
+				);
 
 				$ticketflight = new ticketsflight($bilhete_voo);
 
 				if($ticketflight->is_valid()){
-		    		$ticketflight->save();
+					$ticketflight->save();
+				}else{
+					Redirect::toRoute('home/index');
 				}
-		    }
+			}
 
 			View::make('project.pagamento', ['valor' => Post::get('valor'), 'referencia' => rand(000000000, 999999999), 'entidade' => 15278]);
-		   
+			
+		}else{
+			Redirect::toRoute('home/index');
 		}
 	}
+
+	public function checkin(){
+
+		$allflights = flight::all();
+
+		View::make('project.gestaocheckin', ['allflights' => $allflights]);
+	}
+
+	public function checkinpassengers($id){
+
+		$flight = flight::find([$id]);
+
+		$ticketsflight = ticketsflight::find_all_by_flight_id([$flight->id]);
+
+		View::make('project.gestaocheckinpass', ['ticketsflight' => $ticketsflight]);
+	}
+
+	public function confirmcheckin($id){
+
+		$ticket = ticketsflight::find([$id]);
+
+		$checkin = array('checkin' => 'S');
+		$ticket->update_attributes($checkin);
+
+		if($ticket->is_valid()){
+			$ticket->save();
+			Redirect::toRoute('ticket/checkinpassengers', $ticket->flight_id);
+		}
+
+	}
+
+
 }
 
 

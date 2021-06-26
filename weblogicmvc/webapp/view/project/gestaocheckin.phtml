@@ -5,50 +5,50 @@ use ArmoredCore\WebObjects\Data;
 use ArmoredCore\WebObjects\Redirect;
 
 Layout::includeLayout('indexheader'); 
-$checkin = Data::get('flights');
+$allflights = Data::get('allflights');
 
 
 ?>
 <style>
 table, th, td {
-    border-collapse: collapse;
-    color: black;
-    text-align: center;
-    border-bottom: 1px solid teal;
-    border-top: none;
-    border-left: none;
-    border-right: none;
+	border-collapse: collapse;
+	color: black;
+	text-align: center;
+	border-bottom: 1px solid teal;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	background-color:  rgba(224, 224, 224, 0.4) ;
+
 }
 </style>
-<header id="head">
+<body id="head">
 	<div class="container ">
-		<h2 style="font-weight: bold; font-size: xx-large">Checkin</h2> <table class="container">
-            <br>
-            <br>
-		<?php
+		<h2 style='color: teal; font-weight: bold; font-size: xx-large;'>Checkin</h2> <table class="container" style='width: 85%;'>
+			<br>
+			<br>
+			<?php
 
-        echo "<tr>";
-        echo "<th style='color: teal; font-weight: bold; font-size: large;'>Número de Voo</th>";
-        echo "<th style='color:teal; font-weight: bold; font-size: large;'>ID de Partida</th>";
-        echo "<th style='color:teal; font-weight: bold; font-size: large;'>ID de Chegada</th>";
-        echo "<th style='color:teal; font-weight: bold; font-size: large;'>ID do Avião</th>";
-        echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: large;'>Ver <br> Passageiros</th>";
-        echo "</tr>";
+			echo "<tr>";
+			echo "<th style='color: teal; font-weight: bold; font-size: large;'>Número de Voo</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Partida</th>";
+			echo "<th style='color:teal; font-weight: bold; font-size: large;'>Chegada</th>";
+			echo "<th style='color: teal; width: px50px; font-weight: bold; font-size: large;'>Ver <br> Passageiros</th>";
+			echo "</tr>";
 
 
-			foreach ($checkin as $_checkin) {
+			foreach ($allflights as $flight) {
 				echo "<tr>";
-				echo '<td>'.$_checkin-> nvoo.'</td>';
-				echo '<td>'.$_checkin-> departure_id.' </td>';
-				echo '<td>'.$_checkin-> arrive_id.' </td>';
-                echo '<td>'.$_checkin-> airplane_id.' </td>';
-				echo '<td><a class="btn" href="'.Url::ToRoute("ticket/pessoa", $_checkin->id).'">Ver passageiros</a></td>';
+				echo '<td>'.$flight->nvoo.'</td>';
+				echo '<td>'.$flight->departure->airport->cidade.' </td>';
+				echo '<td>'.$flight->arrival->airport->cidade.' </td>';
+				echo '<td><a class="btn" href="'.Url::ToRoute("ticket/checkinpassengers", $flight->id).'">Ver passageiros</a></td>';
 				echo "</tr>";
 			}
-		?>
+			?>
 		</table>
 		<br>
 
 	</div>
-</header>
+</body>
 <?php Layout::includeLayout('footer') ?>
